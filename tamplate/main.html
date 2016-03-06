@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<title>{{ page_title }}</title>
+		<link rel="stylesheet" href="{{ static_url("css/style.css") }}">
+	</head>
+	</body>
+		<div id="container">
+			<header>
+
+			</header>
+			<div id="main">
+				<div id="content">
+					{% block body %}{% end %}
+				</div>
+			</div>
+			<footer>
+				{% block footer %}
+				<p>
+					For more information, mail: <a href="mailto:poonoo@163.com">richard</a>
+				</p>
+				<p>
+					{% raw linkify("https://fb.me/burtsbooks", extra_params='ref=website') %}.
+				</p>
+				{% end %}
+			</footer>
+		</div>
+	</body>
+</html>
