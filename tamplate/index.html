@@ -1,0 +1,17 @@
+{% extends "main.html" %}
+
+{% block body %}
+<div id="area"></div>
+{% end %}
+{% block footer %}
+<p>
+	For more information, mail: <a href="mailto:poonoo@163.com">richard</a>
+</p>
+<p>
+	{% raw linkify("https://fb.me/burtsbooks", extra_params='ref=website') %}.
+</p>
+{% end %}
+
+{% block scripts %}
+<script src="{{ static_url("js/script.js") }}"></script>
+{% end %}
