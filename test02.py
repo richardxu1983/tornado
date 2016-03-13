@@ -1,4 +1,6 @@
 # test02, test for ajax, tornado
+import sys
+
 import os.path
 import random
 
@@ -11,6 +13,9 @@ import tornado.httpclient
 from uuid import uuid4
 from tornado.options import define, options
 define("port", default=8000, help="run on given port", type=int)
+
+# print(os.path.dirname(sys.path[0]))
+# sys.path[0] = os.path.dirname(sys.path[0])
 
 # index handler
 class IndexHandler(tornado.web.RequestHandler):
