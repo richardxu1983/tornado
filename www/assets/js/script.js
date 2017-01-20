@@ -24,7 +24,7 @@ var Engine = {
 
                     //ajax
                     jQuery.ajax({
-                        url:"//127.0.0.1:8000",
+                        url:"./",
                         type:'POST',
                         data:{
                             session:document.session,
@@ -32,7 +32,6 @@ var Engine = {
                         },
                         dataType:'json',
                         success:function(data,status,xhr){
-                            alert('success');
                             text01.text(data['data']);
                         },
                         error:function(XMLHttpRequest, textStatus, errorThrown){
