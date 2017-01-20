@@ -16,4 +16,4 @@ etc['root_path'] = sys.path[0]
 etc['cookie_secret'] = 'JlgGn8GoT8CedtwuEr6cyE7NI9G9dUZ3pnp4ea/1ISE='
 etc['template_path'] = os.path.join(etc['root_path'], 'app', 'views', '')
 etc['static_path'] = os.path.join(etc['root_path'], 'www', 'assets')
-# etc['database_path'] = os.path.join(etc['root_path'], 'var', 'datas', '')
+etc['database_path'] = os.path.join(etc['root_path'], 'var', 'datas', '')

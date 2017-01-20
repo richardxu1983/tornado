@@ -24,7 +24,7 @@ var Engine = {
 
                     //ajax
                     jQuery.ajax({
-                        url:"//localhost:8000",
+                        url:"//127.0.0.1:8000",
                         type:'POST',
                         data:{
                             session:document.session,
@@ -32,7 +32,18 @@ var Engine = {
                         },
                         dataType:'json',
                         success:function(data,status,xhr){
+                            alert('success');
                             text01.text(data['data']);
+                        },
+                        error:function(XMLHttpRequest, textStatus, errorThrown){
+                             alert(XMLHttpRequest.status);
+                             alert(XMLHttpRequest.readyState);
+                             alert(XMLHttpRequest.responseText);
+                             alert(XMLHttpRequest.statusText);
+                             alert(textStatus);
+                        },
+                        complete: function(XMLHttpRequest, textStatus) {
+                            // 调用本次AJAX请求时传递的options参数
                         }
                     })
                 }

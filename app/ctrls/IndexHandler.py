@@ -12,8 +12,10 @@ class indexHandler(BasicCtrl):
     def post(self):
         action = self.get_argument('action')
         session = self.get_argument('session')
+        #print('recv post')
         if not session:
             self.set_status(400)
         if action == 'text':
             text='back:'+str(random.randint(10, 20))
             self.write('{"data":"%s"}' % text)
+            #self.write('recv post2')
