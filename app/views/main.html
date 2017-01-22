@@ -2,7 +2,7 @@
 <html oncontextmenu="javascript:event.preventDefault();">
 	<head>
 		
-		<meta name="viewport" content="width=device-width,height=device-height;initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,minimal-ui">
+		<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,minimal-ui">
 		<meta http-equiv="Cache-Control" content="max-age:259200">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -34,6 +34,7 @@
 		<footer class="footer">
 			{% block footer %}{% end %}
 		</footer>
+		{% block dev %}{% end %}
 	</body>
 	{% block scripts %}{% end %}
 </html>
