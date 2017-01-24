@@ -3,6 +3,7 @@ from uuid import uuid4
 
 import random
 
+from  game.gs import GS;
 
 class indexHandler(BasicCtrl):
     def get(self):
