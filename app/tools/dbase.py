@@ -1,3 +1,4 @@
+'''
 import torndb
 import MySQLdb
 
@@ -8,3 +9,9 @@ port = 3306
 
 dbcon = MySQLdb.connect(host=host, user=username, passwd=pwd, port=port)
 
+'''
+
+
+import redis
+
+rdb = redis.Redis(host='localhost', port=6379, db=0)

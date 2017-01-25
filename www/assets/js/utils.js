@@ -37,10 +37,11 @@ var Notif = {
 
     tp : function(t)
     {
-        var text = $('<div>').addClass('devInfoTxt').css('opacity',0).text(t).prependTo('div.devBack');
-        text.animate({opacity:1} , 500 , 'linear' , function(){
+        var text = $('<div>').addClass('devInfoTxt').text(t).prependTo('div.devBack');
+        Notif.clearHidden();
+        /*text.animate({opacity:1} , 500 , 'linear' , function(){
             Notif.clearHidden();
-        });
+        });*/
     },
 };
 

@@ -23,7 +23,7 @@ var Notif = {
         }
         if(typeof text == 'undefined') return;
         //if(text.slice(-1) != ".") text += ".";
-        Notif.printMessage(text);
+        Notif.tp(text);
     },
 
     clearHidden : function(){
@@ -35,12 +35,13 @@ var Notif = {
         })
     },
 
-    printMessage : function(t)
+    tp : function(t)
     {
-        var text = $('<div>').addClass('devInfoTxt').css('opacity',0).text(t).prependTo('div.devBack');
-        text.animate({opacity:1} , 500 , 'linear' , function(){
+        var text = $('<div>').addClass('devInfoTxt').text(t).prependTo('div.devBack');
+        Notif.clearHidden();
+        /*text.animate({opacity:1} , 500 , 'linear' , function(){
             Notif.clearHidden();
-        });
+        });*/
     },
 };
 
@@ -50,54 +51,67 @@ var Notif = {
 
 var Debug = true;
 
-var Engine = {
+var Engine = 
+{
+    btn : null,
+    text01: null,
 
-        btn : null,
-        text01: null,
+    init : function()
+    {
+        //
+        Notif.init();
 
-        init : function()
-        {
-            text01 = $('<div>').addClass('text').attr('id', 'text').appendTo('div#area');
-            btn = $('<div>').addClass('clickArea').attr('id', 'click').text('click').appendTo('div#area');
+        text01 = $('<div>').addClass('text').attr('id', 'text').appendTo('div#area');
 
-            Notif.init();
+        //session
+        document.session = $("#session").val();
 
-            //session
-            document.session = $("#session").val();
+        Engine.update();
+    },
 
-            btn.click(
-                function(){
-                    text01.text('wait...');
-                    btn.css('background-color','#ff9999');
-                    btn.animate({backgroundColor:'#6495ed'},100);
+    closeAjax : function(ajax)
+    {
+        ajax.abort();
+    },
 
-                    //ajax
-                    jQuery.ajax({
-                        url:"./",
-                        type:'POST',
-                        data:{
-                            session:document.session,
-                            action:'text'
-                        },
-                        dataType:'json',
-                        success:function(data,status,xhr){
-                            text01.text(data['data']);
-                        },
-                        error:function(XMLHttpRequest, textStatus, errorThrown){
-                             Notif.print("XMLHttpRequest.status="+XMLHttpRequest.status);
-                             Notif.print("XMLHttpRequest.readyState="+XMLHttpRequest.readyState);
-                             Notif.print("XMLHttpRequest.responseText="+XMLHttpRequest.responseText);
-                             Notif.print("XMLHttpRequest.statusText="+XMLHttpRequest.statusText);
-                             Notif.print("XtextStatus="+textStatus);
-                        },
-                        complete: function(XMLHttpRequest, textStatus) {
-                            // 调用本次AJAX请求时传递的options参数
-                        }
-                    })
-                }
-            );
-        }
-    };
+    update : function()
+    {
+        //Notif.print("send!");
+        var ajax = jQuery.ajax
+        ({
+            url:"./",
+            type:'POST',
+            dataType:'json',
+            timeout:3000,
+            data:
+            {
+                session:document.session,
+                action:'text'
+            },
+            success:function(data,status,xhr){
+                //Notif.print("success!");
+                text01.text(data['data']);
+                setTimeout(Engine.update,1000);
+                Engine.closeAjax(ajax);
+            },
+            error:function(XMLHttpRequest, textStatus, errorThrown){
+                //Notif.print("error!");
+                Notif.print("XMLHttpRequest.status="+XMLHttpRequest.status);
+                Notif.print("XMLHttpRequest.readyState="+XMLHttpRequest.readyState);
+                Notif.print("XMLHttpRequest.responseText="+XMLHttpRequest.responseText);
+                Notif.print("XMLHttpRequest.statusText="+XMLHttpRequest.statusText);
+                Notif.print("XtextStatus="+textStatus);
+                setTimeout(Engine.update,1000);
+                Engine.closeAjax(ajax);
+            },
+            complete: function(XMLHttpRequest, textStatus) {
+                // 调用本次AJAX请求时传递的options参数
+                //Notif.print("complete!");
+                //setTimeout(Engine.update,1000);
+            }
+        });
+    },
+};
 
 $(
     function()

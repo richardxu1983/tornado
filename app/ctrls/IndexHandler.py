@@ -18,5 +18,5 @@ class indexHandler(BasicCtrl):
             self.set_status(400)
         if action == 'text':
             text='back:'+str(random.randint(10, 20))
-            self.write('{"data":"%s"}' % text)
+            self.write('{"data":"%s"}' % GS.day())
             #self.write('recv post2')
