@@ -21,55 +21,12 @@ var Engine =
         document.session = $("#session").val();
 
         //Engine.update();
-        this.ShowloginUI()
+        Login.createUI('div#box');
     },
 
     closeAjax : function(ajax)
     {
         ajax.abort();
-    },
-
-    ShowloginUI : function()
-    {
-        this.loginui = $('<div>').addClass('center-block').addClass('col-xs-6').addClass('col-md-4').attr('id', 'logindiv').appendTo("div#box");
-        $('<div>').attr('id', 'form_signin').appendTo('#logindiv');
-        var inst_html = "";
-        inst_html = "<h2 class='form-signin-heading'>请登录</h2>";
-        inst_html+="<label for='username' class='sr-only'>用户名</label>"
-        inst_html+="<input type='text' id='username' class='form-control' placeholder='用户名' required autofocus> "
-        inst_html+="<label for='inputPassword' class='sr-only'>密码</label>"
-        inst_html+="<input type='password' id='inputPassword' class='form-control' placeholder='密码' required>"
-        inst_html+="<button class='btn btn-lg btn-primary btn-block' id='signinBtn' >登录</button> "
-        $('#form_signin').html(inst_html);
-
-        $('#signinBtn').click(function()
-        {
-            jQuery.ajax
-            ({
-                url:"./",
-                type:'POST',
-                dataType:'json',
-                timeout:1000,
-                data:
-                {
-                    session:document.session,
-                    action:'signin',
-                    name:$('#username').val(),
-                    pwd:$('#inputPassword').val()
-                },
-                beforeSend:function(){  
-                    $('#signinBtn').text('登录中...')
-                },
-                success:function(data,status,xhr){
-                    //Notif.print("success!"); 
-                },
-                error:function(XMLHttpRequest, textStatus, errorThrown){
-                },
-                complete: function(XMLHttpRequest, textStatus) {
-                    $('#signinBtn').text('登录')  
-                }
-            });
-        })
     },
 
     update : function()

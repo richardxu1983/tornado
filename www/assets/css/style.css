@@ -1,7 +1,7 @@
 @media all, screen and (orientation : landscape){
     body 
     {
-        font-family: Tahoma, Helvetica, Arial, "\5b8b\4f53", sans-serif;
+        font-family: 'Helvetica Neue',Helvetica,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',Arial,sans-serif;
         background-color: #233333;
         -moz-user-select: none;
         -webkit-user-select: none;
@@ -88,6 +88,7 @@
 
     #logindiv
     {
+        vertical-align: middle;
         position: absolute;
         left: 33%;
         top:25%;
@@ -96,9 +97,44 @@
         padding-bottom: 25px;
     }
 
-    .form-control
+    .signTitle
     {
-        margin-bottom: 10px;
+        font-size: 18px;
+        margin-bottom: 18px;
+        margin-top: 18px;
+    }
+
+    #signinBtn
+    {
+        margin-top: 18px;
+        background: #0f88eb;
+        box-shadow: none;
+        border: 0;
+        border-radius: 3px;
+        color: #fff;
+        font-size: 15px;
+    }
+
+    #signinBtn:hover
+    {
+        background: #55abed;
+    }
+
+    .input-wrapper
+    {
+        position: relative;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    .error
+    {
+        position: absolute;
+        top: 0;
+        right: 8px;
+        padding: 0 8px;
+        color: #c33;
+        cursor: text;
     }
 
     .clickArea
