@@ -1,6 +1,7 @@
 @media all, screen and (orientation : landscape){
     body 
     {
+        font-family: Tahoma, Helvetica, Arial, "\5b8b\4f53", sans-serif;
         background-color: #233333;
         -moz-user-select: none;
         -webkit-user-select: none;
@@ -74,7 +75,7 @@
         width:100px;
         height: 50px;
         padding: 10px;
-        margin: 10px;
+        margin: 0 auto;
         background-color: bisque;
         font-size: 26px;
         text-align: center;
@@ -83,6 +84,21 @@
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+    }
+
+    #logindiv
+    {
+        position: absolute;
+        left: 33%;
+        top:25%;
+        background-color: #fafafa;
+        border-radius: 10px;
+        padding-bottom: 25px;
+    }
+
+    .form-control
+    {
+        margin-bottom: 10px;
     }
 
     .clickArea

@@ -20,6 +20,11 @@ class indexHandler(BasicCtrl):
             text='back:'+str(random.randint(10, 20))
             self.write('{"data":"%s"}' % GS.day())
             #self.write('recv post2')
+        if action == 'signin':
+            username = self.get_argument('name')
+            pwd = self.get_argument('pwd')
+            print ("username : %s , pwd : %s" % (username , pwd))
+            self.write('{"sta": 0}')
 
     def on_finish(self):
         #print("on_finish")
