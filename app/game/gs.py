@@ -1,6 +1,8 @@
 #
-from  tools.dbase import rdb;
+from  tools.dbase import conn;
 import tornado
+
+DAY_SEC = 10
 
 class gameServer():
 
@@ -8,13 +10,30 @@ class gameServer():
 
     def __init__(self):
         self._day = 0
+        self.counter = 0
 
     def redDB(self):
-        info = rdb.info()
-        print '\ndbsize: %s' % rdb.dbsize()
-        print "ping %s" % rdb.ping()
+        info = conn.info()
+        print '\ndbsize: %s' % conn.dbsize()
+        print "ping %s" % conn.ping()
+
+        #get string key
+        dbDay = conn.get('day')
+        print ('dbDay : %s' % dbDay)
+        if dbDay==None:
+            #set string key
+            conn.set('day',self._day)
+            print ('Day : %s' % conn.get('day'))
+        else:
+            self._day = int(dbDay)
 
     def update(self):
+        self.counter += 1
+        if self.counter>=DAY_SEC:
+            self._day+=1
+            self.counter = 0
+            conn.set('day',self._day)
+            print ('Day : %s' % conn.get('day'))
         pass
         #self._day += 1;
         #print("update")

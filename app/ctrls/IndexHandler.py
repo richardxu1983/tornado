@@ -20,3 +20,11 @@ class indexHandler(BasicCtrl):
             text='back:'+str(random.randint(10, 20))
             self.write('{"data":"%s"}' % GS.day())
             #self.write('recv post2')
+
+    def on_finish(self):
+        #print("on_finish")
+        pass
+
+    def on_connection_close(self):
+        #print("on_connection_close")
+        pass
