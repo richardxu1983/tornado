@@ -91,20 +91,64 @@
         vertical-align: middle;
         position: absolute;
         left: 33%;
-        top:25%;
-        background-color: #fafafa;
+        top:45%;
         border-radius: 10px;
         padding-bottom: 25px;
     }
 
-    .signTitle
+    #regwrapper #singnwrapper
     {
-        font-size: 18px;
-        margin-bottom: 18px;
-        margin-top: 18px;
+        position: absolute;
+        margin-top: 30px;
     }
 
-    #signinBtn
+    .title
+    {
+        position: absolute;
+        top:18%;
+        left:35.5%;
+        font-size: 56px;
+        color: #666;
+    }
+
+    .signTitle
+    {
+        font-size: 17px;
+        margin-bottom: 18px;
+        margin-top: 18px;
+        height: 25px;
+    }
+
+    #nav_signup
+    {
+        margin-right: 10px;
+    }
+
+    a
+    {
+        color: #999;
+    }
+
+    a.active 
+    {
+        opacity: 1;
+        -ms-filter: "alpha(Opacity=100)";
+        color: #0f88eb;
+        padding-bottom: 5px;
+        border-bottom:2px solid #0f88eb
+    }
+
+    #nav_signup:hover
+    {
+        cursor:pointer
+    }
+
+    #nav_signin:hover
+    {
+        cursor:pointer
+    }
+
+    #signinBtn,#signupBtn
     {
         margin-top: 18px;
         background: #0f88eb;
@@ -130,11 +174,20 @@
     .error
     {
         position: absolute;
-        top: 0;
+        top: 8px;
         right: 8px;
-        padding: 0 8px;
+        padding: 0 4px;
         color: #c33;
         cursor: text;
+    }
+
+    .errormsg
+    {
+        color: #c33;
+        cursor: text;
+        margin-top: 16px;
+        text-align: center;
+        font-weight: 700;
     }
 
     .clickArea

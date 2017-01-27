@@ -55,3 +55,12 @@ def release_lock(conn, lockname, identifier):
 			pass
 
 	return False
+
+#
+def gen_salt():
+	salt = conn.get('salt')
+	if salt==None:
+		#set string key
+		conn.set('salt','ff20934g34hg7d')
+
+gen_salt()

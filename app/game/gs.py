@@ -27,6 +27,9 @@ class gameServer():
         else:
             self._day = int(dbDay)
 
+        salt = conn.get('salt')
+        print salt
+
     def update(self):
         self.counter += 1
         if self.counter>=DAY_SEC:

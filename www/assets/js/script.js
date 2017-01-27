@@ -15,7 +15,7 @@ var Engine =
         //
         Notif.init();
 
-        text01 = $('<div>').addClass('text').attr('id', 'text').appendTo('div#area');
+        //text01 = $('<div>').addClass('text').attr('id', 'text').appendTo('div#area');
 
         //session
         document.session = $("#session").val();
