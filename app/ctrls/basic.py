@@ -1,7 +1,14 @@
+# coding=utf-8
+# encoding=utf-8
 
 import os.path
 import tornado
-
+import random
+import hashlib
+import string
+import time
+import binascii
+import tools.dbase
 
 class BasicCtrl(tornado.web.RequestHandler):
         def set_default_headers(self):
@@ -50,3 +57,52 @@ class BasicCtrl(tornado.web.RequestHandler):
 
         def get_escaper(self):
             return tornado.escape
+
+        # 生成当前操作的系统时间
+        def time_operate(self):
+            return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
+
+        # 生成18位随机数
+        def random_number(self):
+            return random.randint(100000000000000000, 999999999999999999)
+
+        # 产生32位的salt值
+        def random_salt(self):
+            return binascii.b2a_hex(os.urandom(16))
+
+        # 产生存入数据库的密码hash值
+        def result_hash(self, username, password, salt):
+            hash_value = hashlib.md5(username + password).hexdigest().decode()
+            return hashlib.md5(salt + hash_value).hexdigest()
+
+        # 设置当前登录用户
+        def set_current_user(self, user):
+            if user:
+                self.set_secure_cookie("user", tornado.escape.json_encode(user), expires_days = 7)
+            else:
+                self.clear_cookie("user")
+
+        # 设置登录码login_code
+        def set_current_login_code(self, login_code):
+            if login_code:
+                self.set_secure_cookie("login_code", tornado.escape.json_encode(login_code), expires_days = 7)
+            else:
+                self.clear_cookie("login_code")
+
+        # 比较login_code是否一致
+        def login_code_verify(self, username, login_code):
+            if tools.dbase.get_login_code(username) == login_code:
+                return True
+            else:
+                self.clear_cookie("user")
+                self.clear_cookie("login_code")
+                return False
+
+        # 获取用户名cookie
+        def get_current_user(self):
+            return self.get_secure_cookie("user")
+
+
+        # 获取登录码login_code
+        def get_current_login_code(self):
+            return self.get_secure_cookie("login_code")

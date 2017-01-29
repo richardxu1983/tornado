@@ -1,3 +1,4 @@
+#coding=utf-8
 '''
 import torndb
 import MySQLdb
@@ -11,10 +12,12 @@ dbcon = MySQLdb.connect(host=host, user=username, passwd=pwd, port=port)
 
 '''
 
-
 import redis
 import uuid
 import time
+import math
+import binascii
+import os
 
 conn = redis.Redis(host='localhost', port=6379, db=0)
 
@@ -64,3 +67,16 @@ def gen_salt():
 		conn.set('salt','ff20934g34hg7d')
 
 gen_salt()
+
+# 在用户登录的时候,给用户设置一个随机字符串,每次登录时会改变。
+def set_login_code(username):
+    login_code = binascii.b2a_hex(os.urandom(16))
+    conn.set("%s : login_code" % username, login_code)
+
+# 根据用户名获取随机字符串
+def get_login_code(username):
+    if conn.get("%s : login_code" % username) == None:  # 若获取随机字符串时为空,则先设置一个,再获取
+        set_login_code(username)
+        get_login_code(username)
+    else:
+        return conn.get("%s : login_code" % username)

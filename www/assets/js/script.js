@@ -6,29 +6,13 @@ var Debug = true;
 
 var Engine = 
 {
-    btn : null,
-    text01: null,
-    loginui: null,
 
     init : function()
     {
         //
         Notif.init();
-
-        //text01 = $('<div>').addClass('text').attr('id', 'text').appendTo('div#area');
-
-        //session
-        document.session = $("#session").val();
-
-        //Engine.update();
-        Login.createUI('div#box');
     },
-
-    closeAjax : function(ajax)
-    {
-        ajax.abort();
-    },
-
+/*
     update : function()
     {
         //Notif.print("send!");
@@ -64,7 +48,7 @@ var Engine =
                 //setTimeout(Engine.update,1000);
             }
         });
-    },
+    },*/
 };
 
 $(

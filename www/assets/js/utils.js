@@ -113,5 +113,20 @@ function checkIsEMail(s) {
 //
 function enc(s)
 {
-    return $.md5(s+($('#date').val()))
+    return $.md5(s+($('#date').val())+s.substr(1, 3))
 }
+
+function getCookie(name) {
+    var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+    return r ? r[1] : undefined;
+}
+
+jQuery.postJSON = function(url, args, callback,fail) {
+    args._xsrf = getCookie("_xsrf");
+    $.ajax({url: url,timeout:1000, data: $.param(args), dataType: "json", type: "POST",
+        success: function(response) {
+            callback(response);
+        },
+        error : function(){fail();}
+    });
+};
