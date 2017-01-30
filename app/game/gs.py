@@ -13,22 +13,12 @@ class gameServer():
         self.counter = 0
 
     def redDB(self):
-        info = conn.info()
-        print '\ndbsize: %s' % conn.dbsize()
-        print "ping %s" % conn.ping()
-
         #get string key
         dbDay = conn.get('day')
-        print ('dbDay : %s' % dbDay)
         if dbDay==None:
-            #set string key
             conn.set('day',self._day)
-            print ('Day : %s' % conn.get('day'))
         else:
             self._day = int(dbDay)
-
-        salt = conn.get('salt')
-        print salt
 
     def update(self):
         self.counter += 1

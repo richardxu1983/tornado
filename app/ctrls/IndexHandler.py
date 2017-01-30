@@ -14,11 +14,31 @@ class indexHandler(BasicCtrl):
         username = tornado.escape.json_decode(self.current_user)   # 获取登录名
         login_code = tornado.escape.json_decode(self.get_current_login_code())   # 获取登录码
         session = uuid4()
-        salt = conn.get('salt')
         print(username)
         print(login_code)
-        self.render('index.html', page_title="hello!", session=session, date=salt)
+        self.render('index.html', page_title="hello!", session=session, date='ff20934g34hg7d')
 
     def post(self):
-        pass
+        action = self.get_argument('action')
+        if action == 'signin':
+            username = tornado.escape.json_decode(self.current_user)   # 获取登录名
+            login_code = tornado.escape.json_decode(self.get_current_login_code())   # 获取登录码
 
+            id = conn.hget('users:',username)
+            
+            print("id : %s" % id)
+
+            if not id:
+                self.write({"sta": "-1"})   # 表示无此用户
+                self.finish()
+                return
+
+            if login_code_verify(self, username, login_code)==False:
+                self.write({"sta": "-2"})   # 在别处登录了
+                self.finish()
+                return
+
+            self.write({"sta": "0"})   # 在别处登录了
+            self.finish()
+            return
+        pass

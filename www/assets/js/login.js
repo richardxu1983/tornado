@@ -97,8 +97,6 @@ var Login = {
 
     ing : false,
 
-    pwd : null,
-
     createUI : function(parent)
     {
         title = $('<div>').addClass('title').html("冒险者大陆").appendTo(parent);
@@ -137,14 +135,17 @@ var Login = {
         $('#susername').focus(function(){
             Login.delError('#susernamewrapper');
             $('#susername').val("");
+            Login.clearError("#signuperror")
         })
         $('#sinputPassword').focus(function(){
             Login.delError('#spwdwrapper');
             $('#sinputPassword').val("");
+            Login.clearError("#signuperror")
         })
         $('#repeatPassword').focus(function(){
             Login.delError('#srpwdwrapper');
             $('#repeatPassword').val("");
+            Login.clearError("#signuperror")
         })
         Login.onClickSigninNav();
     },
@@ -200,21 +201,6 @@ var Login = {
         Login.clearError();
     },
 
-    nameCheck : function(str)
-    {
-
-    },
-
-    pwdCheck : function(str)
-    {
-
-    },
-
-    pwdProc : function()
-    {
-
-    },
-
     onSignError : function()
     {
 
@@ -258,13 +244,13 @@ var Login = {
         if(bNameValid&&bPwdValid&&bIsSame)
         {
             Login.ing = true;
-            data = 
+            var data = 
                 {
                     session:document.session,
                     action:'signup',
                     name:uname,
                     pwd:spwd,
-                },
+                };
             jQuery.postJSON("./login",data,Login.onSignupBack,Login.onSignError)           
         }
     },
@@ -324,13 +310,13 @@ var Login = {
         if(bNameValid&&bPwdValid)
         {
             Login.ing = true;
-            data = 
+            var data = 
                 {
                     session:document.session,
                     action:'signin',
                     name:uname,
                     pwd:spwd,
-                },
+                };
             jQuery.postJSON("./login",data,Login.onSigninBack,Login.onSignError)
         }
     },

@@ -11,7 +11,50 @@ var Engine =
     {
         //
         Notif.init();
+
+        //
+        Engine.signinCheck();
+
     },
+
+    signinCheck : function()
+    {
+        var data = 
+        {
+            session:document.session,
+            action:'signin',
+        };
+        jQuery.postJSON("./",data,Engine.onSigninBack,Engine.onSignError)
+    },
+
+    onSigninBack : function(data)
+    {
+        var sta = parseInt(data.sta);
+        if(sta!=0)
+        {
+            if(sta == -1){
+                alert("用户不存在，请重新登录！")
+                window.location.href = "/login";
+            }else if(sta == -2){
+                alert("在别处登录了，请重新登录！")
+                window.location.href = "/login";
+            }
+            else{
+                alert("发生未知错误，请重新登录！")
+                window.location.href = "/login";
+            }
+        }
+        else
+        {
+            //登录成功
+        }
+    },
+
+    onSignError : function(data)
+    {
+
+    },
+
 /*
     update : function()
     {

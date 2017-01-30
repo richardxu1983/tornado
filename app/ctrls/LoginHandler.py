@@ -18,8 +18,7 @@ class LoginHandler(BasicCtrl):
         self.clear_cookie("user")
         self.clear_cookie("login_code")
         session = uuid4()
-        salt = conn.get('salt')
-        self.render('login.html', page_title="welcome!", session=session, date=salt)
+        self.render('login.html', page_title="welcome!", session=session, date='ff20934g34hg7d')
 
     def post(self):
         action = self.get_argument('action')
