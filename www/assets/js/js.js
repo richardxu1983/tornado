@@ -143,6 +143,13 @@ var Engine =
         //
         Notif.init();
 
+        //
+        Engine.signinCheck();
+
+    },
+
+    signinCheck : function()
+    {
         var data = 
         {
             session:document.session,
@@ -170,7 +177,7 @@ var Engine =
         }
         else
         {
-            alert("登录成功！")
+            //登录成功
         }
     },
 

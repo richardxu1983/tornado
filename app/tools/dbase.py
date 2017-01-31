@@ -26,6 +26,8 @@ print '\ndbsize: %s' % conn.dbsize()
 print "ping %s" % conn.ping()
 print(conn.keys())
 
+#print(time.asctime( time.localtime(time.time()) ))
+
 #acquire_lock_with_timeout
 def acquire_lock_with_timeout(conn, lockname, acquire_timeout=10, lock_timeout=10):
 	identifier = str(uuid.uuid4())
@@ -67,7 +69,7 @@ def release_lock(conn, lockname, identifier):
 # 在用户登录的时候,给用户设置一个随机字符串,每次登录时会改变。
 def set_login_code(username):
     login_code = binascii.b2a_hex(os.urandom(16))
-    conn.set("%s : login_code" % username, login_code)
+    conn.set("%s:login_code" % username, login_code)
 
 # 根据用户名获取随机字符串
 def get_login_code(username):

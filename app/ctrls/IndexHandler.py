@@ -7,6 +7,7 @@ import tornado.web
 
 from  game.gs import GS;
 from  tools.dbase import conn;
+import time;
 
 class indexHandler(BasicCtrl):
     @tornado.web.authenticated
@@ -33,11 +34,15 @@ class indexHandler(BasicCtrl):
                 self.finish()
                 return
 
-            if login_code_verify(self, username, login_code)==False:
+            if self.login_code_verify(username, login_code)==False:
                 self.write({"sta": "-2"})   # 在别处登录了
                 self.finish()
                 return
 
+            conn.hmset('user:%s'%id,{
+                'signin':time.time(),
+                })
+            #print(time.asctime( time.localtime(float(conn.hmget('user:%s'%id,'signin')[0]))))
             self.write({"sta": "0"})   # 在别处登录了
             self.finish()
             return

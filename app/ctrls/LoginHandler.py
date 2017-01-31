@@ -44,8 +44,6 @@ class LoginHandler(BasicCtrl):
             tools.dbase.set_login_code(username)  # 用户登录时设置login_code
             login_code = tools.dbase.get_login_code(username)  # 获取用户登录随即设置的login_code
 
-            pipeline = conn.pipeline(True)
-
             id = conn.hget('users:',username)
             print("id : %s" % id)
             if not id:
@@ -61,6 +59,9 @@ class LoginHandler(BasicCtrl):
                 self.finish()
                 return 
 
+            conn.hmset('user:%s'%id,{
+                'signin':time.time(),
+                })
             self.set_current_user(username)
             self.set_current_login_code(login_code)
             self.write('{"sta": 0}')
