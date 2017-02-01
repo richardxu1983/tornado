@@ -46,7 +46,20 @@ var Engine =
         }
         else
         {
+            //
+            $('<div>').addClass('topBar').appendTo("#box");
+            $('<div>').addClass('bottombar').appendTo("#box");
+            
             //登录成功
+            GameInfo.init();
+
+            //
+            Env.init();
+
+            //
+            Bag.init();
+
+            GameMenu.init()
         }
     },
 

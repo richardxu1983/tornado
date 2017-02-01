@@ -2,6 +2,18 @@
  * Created by 95 on 2016/3/7.
  */
 
+var text=new Array();
+text[0]="系 统"
+text[1]="返 回"
+text[2]="退出登录"
+
+function getString(id) {
+    // body...
+    return text[id];
+}/**
+ * Created by 95 on 2016/3/7.
+ */
+
 var Notif = {
 
     init : function(options)
@@ -44,6 +56,141 @@ var Notif = {
         });*/
     },
 };
+
+var GameInfo = {
+
+    init : function(options)
+    {
+        var elem = $('<div>').addClass('gi').appendTo("#box");
+        $('<div>').attr('id','notifyGradient').appendTo(elem);
+    },
+
+    print : function(text){
+
+        if(typeof text == 'undefined') return;
+        //if(text.slice(-1) != ".") text += ".";
+        GameInfo.tp(text);
+    },
+
+    clearHidden : function(){
+        var bottom = $('div.gi').position().top + $('div.gi').outerHeight(true);
+        $('div.gi>.devInfoTxt').each(function () {
+            if($(this).position().top > bottom){
+                $(this).remove();
+            }
+        })
+    },
+
+    tp : function(t)
+    {
+        var text = $('<div>').addClass('devInfoTxt').text(t).prependTo('div.gi');
+        GameInfo.clearHidden();
+        text.animate({opacity:1} , 500 , 'linear' , function(){
+            GameInfo.clearHidden();
+        });
+    },
+}
+
+function setHorizontalCenter(ui,parent)
+{
+    var total = parent.width()
+    var left = (total - ui.width())/2
+    ui.css('left',left+'px');
+}
+
+
+var GameMenu = {
+
+    panel : null,
+
+    mask : null,
+
+    btn:null,
+
+    init : function(options)
+    {
+        this.mask = $('<div>').addClass('maskOuter').appendTo(".container-fluid");
+        this.panel = $('<div>').addClass('menup').appendTo(".maskOuter");
+        setHorizontalCenter(this.panel,$("#box"));
+        this.panel.css('top','220px');
+
+        var signoutBtn = CreateBtn({
+            text:getString(2),
+            click:GameMenu.onClickSignout,
+            id:"signoutBtn",
+            center:true,
+        },this.panel)
+
+        signoutBtn.css("top","30%")
+
+        var backBtn = CreateBtn({
+            text:getString(1),
+            click:GameMenu.hideMenu,
+            id:"menuback",
+            center:true,
+        },this.panel)
+
+        backBtn.css("position","absolute")
+        backBtn.css("bottom","18px")
+
+        this.hideMenu();
+
+        this.btn = CreateBtn({
+            text:getString(0),
+            click:GameMenu.showMenu,
+            id:"menu",
+        },$(".bottombar"))
+        this.btn.css("float","right")
+        this.btn.css("margin-right","5px")
+    },
+
+    onClickSignout : function()
+    {
+        window.location.href = "/logout";
+    },
+
+    showMenu : function()
+    {
+        GameMenu.mask.show();
+    },
+
+    hideMenu : function()
+    {
+        GameMenu.mask.hide();
+    },
+}
+
+function CreateBtn(options,parent)
+{
+    var el = $('<div>')
+    .attr('id',options.id)
+    .addClass('btn_normal')
+    if(options.click!=undefined)
+    {
+         el.click(options.click)
+    }
+    if(parent!=undefined)
+    {
+        el.appendTo(parent)
+    }
+    var w = options.text.getTextW() + 20
+    el.css("width",w+"px");
+    el.text(options.text);
+    if(options.center==true)
+    {
+         setHorizontalCenter(el,parent)
+    }
+    return el;
+}
+
+String.prototype.getTextW = function(style){//获取字符串宽度及高度  
+    var $span=$("<span>"+this+"</span>");  
+    $span.css($.extend({},style,{visibility:"hidden"}));  
+    $("body").append($span);  
+    var w=$span.width()
+    $span.remove();  
+    return w;
+};  
 
 function checkIshanzi(s) {
     //var patrn = /^[\u2E80-\u9FFF]$/; //Unicode编码中的汉字范围  /[^\x00-\x80]/
@@ -109,6 +256,14 @@ function checkIsEMail(s) {
     if (!patrn.exec(s)) return false
     return true
 }
+
+//获取文字宽度
+function getTextWidth(text)
+{
+    var ruler = $("#ruler"); 
+    ruler.text(text); 
+    return ruler.width(); 
+}
  
 //
 function enc(s)
@@ -130,6 +285,61 @@ jQuery.postJSON = function(url, args, callback,fail) {
         error : function(){fail();}
     });
 };/**
+ * Created by 95 on 2016/3/7.
+ */
+
+var Bag = {
+
+    ui : null,
+
+    cells : null,
+
+    desc : null,
+
+    title_txt : "背包 [ 0/16 ]",
+
+    init : function(options)
+    {
+        ui = $('<div>').addClass('bagwrap').appendTo("#box");
+        $('<div>').addClass('titlewrap').text(Bag.title_txt).appendTo('.bagwrap');
+        cells = $('<div>').addClass('bagcells').appendTo('.bagwrap');
+        $('<div>').addClass('descwrap').appendTo('.bagwrap');
+        desc = $('<div>').addClass('bagdesc').appendTo('.descwrap');
+    },
+}/**
+ * Created by 95 on 2016/3/7.
+ */
+
+var Env = {
+
+    time_ui : null,
+
+    pos_ui : null,
+
+    time_txt : "1001年 , 第1天 , 白天 [ 春天 - 晴朗 ]",
+
+    pos_txt : "奥丁城郊外 [12,35] - 自己的家",
+
+    day : 0,
+
+    hour : 0,
+
+    init : function(options)
+    {
+        time_ui = $('<div>').addClass('wrd').text(Env.time_txt).css("left","8px").appendTo(".topBar");
+        pos_ui = $('<div>').addClass('wrd').text(Env.pos_txt).css("right","18px").appendTo(".topBar");
+    },
+
+    setTimeTxt : function(str)
+    {
+        Env.time_ui.text(str);
+    },
+
+    setPosTxt : function(str)
+    {
+        Env.pos_ui.text(str);
+    },
+}/**
  * Created by 95 on 2016/3/7.
  */
 
@@ -177,7 +387,20 @@ var Engine =
         }
         else
         {
+            //
+            $('<div>').addClass('topBar').appendTo("#box");
+            $('<div>').addClass('bottombar').appendTo("#box");
+            
             //登录成功
+            GameInfo.init();
+
+            //
+            Env.init();
+
+            //
+            Bag.init();
+
+            GameMenu.init()
         }
     },
 

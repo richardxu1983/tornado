@@ -45,6 +45,141 @@ var Notif = {
     },
 };
 
+var GameInfo = {
+
+    init : function(options)
+    {
+        var elem = $('<div>').addClass('gi').appendTo("#box");
+        $('<div>').attr('id','notifyGradient').appendTo(elem);
+    },
+
+    print : function(text){
+
+        if(typeof text == 'undefined') return;
+        //if(text.slice(-1) != ".") text += ".";
+        GameInfo.tp(text);
+    },
+
+    clearHidden : function(){
+        var bottom = $('div.gi').position().top + $('div.gi').outerHeight(true);
+        $('div.gi>.devInfoTxt').each(function () {
+            if($(this).position().top > bottom){
+                $(this).remove();
+            }
+        })
+    },
+
+    tp : function(t)
+    {
+        var text = $('<div>').addClass('devInfoTxt').text(t).prependTo('div.gi');
+        GameInfo.clearHidden();
+        text.animate({opacity:1} , 500 , 'linear' , function(){
+            GameInfo.clearHidden();
+        });
+    },
+}
+
+function setHorizontalCenter(ui,parent)
+{
+    var total = parent.width()
+    var left = (total - ui.width())/2
+    ui.css('left',left+'px');
+}
+
+
+var GameMenu = {
+
+    panel : null,
+
+    mask : null,
+
+    btn:null,
+
+    init : function(options)
+    {
+        this.mask = $('<div>').addClass('maskOuter').appendTo(".container-fluid");
+        this.panel = $('<div>').addClass('menup').appendTo(".maskOuter");
+        setHorizontalCenter(this.panel,$("#box"));
+        this.panel.css('top','220px');
+
+        var signoutBtn = CreateBtn({
+            text:getString(2),
+            click:GameMenu.onClickSignout,
+            id:"signoutBtn",
+            center:true,
+        },this.panel)
+
+        signoutBtn.css("top","30%")
+
+        var backBtn = CreateBtn({
+            text:getString(1),
+            click:GameMenu.hideMenu,
+            id:"menuback",
+            center:true,
+        },this.panel)
+
+        backBtn.css("position","absolute")
+        backBtn.css("bottom","18px")
+
+        this.hideMenu();
+
+        this.btn = CreateBtn({
+            text:getString(0),
+            click:GameMenu.showMenu,
+            id:"menu",
+        },$(".bottombar"))
+        this.btn.css("float","right")
+        this.btn.css("margin-right","5px")
+    },
+
+    onClickSignout : function()
+    {
+        window.location.href = "/logout";
+    },
+
+    showMenu : function()
+    {
+        GameMenu.mask.show();
+    },
+
+    hideMenu : function()
+    {
+        GameMenu.mask.hide();
+    },
+}
+
+function CreateBtn(options,parent)
+{
+    var el = $('<div>')
+    .attr('id',options.id)
+    .addClass('btn_normal')
+    if(options.click!=undefined)
+    {
+         el.click(options.click)
+    }
+    if(parent!=undefined)
+    {
+        el.appendTo(parent)
+    }
+    var w = options.text.getTextW() + 20
+    el.css("width",w+"px");
+    el.text(options.text);
+    if(options.center==true)
+    {
+         setHorizontalCenter(el,parent)
+    }
+    return el;
+}
+
+String.prototype.getTextW = function(style){//获取字符串宽度及高度  
+    var $span=$("<span>"+this+"</span>");  
+    $span.css($.extend({},style,{visibility:"hidden"}));  
+    $("body").append($span);  
+    var w=$span.width()
+    $span.remove();  
+    return w;
+};  
+
 function checkIshanzi(s) {
     //var patrn = /^[\u2E80-\u9FFF]$/; //Unicode编码中的汉字范围  /[^\x00-\x80]/
     var patrn = /[^\x00-\x80]/;
@@ -108,6 +243,14 @@ function checkIsEMail(s) {
     var patrn = /^([0-9A-Za-z\-_\.]+)@([0-9A-Za-z]+\.[A-Za-z]{2,3}(\.[A-Za-z]{2})?)$/g;
     if (!patrn.exec(s)) return false
     return true
+}
+
+//获取文字宽度
+function getTextWidth(text)
+{
+    var ruler = $("#ruler"); 
+    ruler.text(text); 
+    return ruler.width(); 
 }
  
 //
