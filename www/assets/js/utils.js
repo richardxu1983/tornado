@@ -45,23 +45,23 @@ var Notif = {
     },
 };
 
-var GameInfo = {
-
+var Chn1= {
+    elem:null,
     init : function(options)
     {
-        var elem = $('<div>').addClass('gi').appendTo("#box");
-        $('<div>').attr('id','notifyGradient').appendTo(elem);
+        Chn1.elem = $('<div>').attr("id","Chn1").addClass('gi').appendTo("#box");
+        $('<div>').attr("id",'notifyGradient').appendTo(Chn1.elem);
     },
 
     print : function(text){
 
         if(typeof text == 'undefined') return;
         //if(text.slice(-1) != ".") text += ".";
-        GameInfo.tp(text);
+        Chn1.tp(text);
     },
 
     clearHidden : function(){
-        var bottom = $('div.gi').position().top + $('div.gi').outerHeight(true);
+        var bottom = $('div.gi').position().top + $(Chn1.elem).outerHeight(true);
         $('div.gi>.devInfoTxt').each(function () {
             if($(this).position().top > bottom){
                 $(this).remove();
@@ -71,13 +71,93 @@ var GameInfo = {
 
     tp : function(t)
     {
-        var text = $('<div>').addClass('devInfoTxt').text(t).prependTo('div.gi');
-        GameInfo.clearHidden();
-        text.animate({opacity:1} , 500 , 'linear' , function(){
-            GameInfo.clearHidden();
+        var text = $('<div>').addClass('devInfoTxt').css('opacity', '0').text(t).prependTo(Chn1.elem);
+        Chn1.clearHidden();
+        text.animate({opacity:1} , 800 , 'linear' , function(){
+            Chn1.clearHidden();
         });
     },
+
+    hide:function()
+    {
+        Chn1.elem.hide()
+    },
+    show:function()
+    {
+        Chn1.elem.show()
+    },
 }
+
+var Chn2 = {
+    elem:null,
+    init : function(options)
+    {
+        Chn2.elem = $('<div>').attr("id","Chn2").addClass('gi').appendTo("#box");
+        $('<div>').attr("id",'notifyGradient').appendTo(Chn2.elem);
+    },
+
+    print : function(text){
+
+        if(typeof text == 'undefined') return;
+        //if(text.slice(-1) != ".") text += ".";
+        Chn2.tp(text);
+    },
+
+    clearHidden : function(){
+        var bottom = $('div.gi').position().top + $(Chn2.elem).outerHeight(true);
+        $('div.gi>.devInfoTxt').each(function () {
+            if($(this).position().top > bottom){
+                $(this).remove();
+            }
+        })
+    },
+
+    tp : function(t)
+    {
+        var text = $('<div>').addClass('devInfoTxt').css('opacity', '0').text(t).prependTo(Chn2.elem);
+        Chn2.clearHidden();
+        text.animate({opacity:1} , 800 , 'linear' , function(){
+            Chn2.clearHidden();
+        });
+    },
+    hide:function()
+    {
+        Chn2.elem.hide()
+    },
+    show:function()
+    {
+        Chn2.elem.show()
+    },
+}
+
+function printMsg(str,chl)
+{
+    if(chl==1)
+    {
+        Chn1.print(str)
+    }
+    else
+    {
+        Chn2.print(str)
+    }
+}
+
+function SwitchCh1()
+{
+    Chn2.hide();
+    Chn1.show();
+    AddTinySel($("#Chn1_btn"))
+    RemoveTinySel($("#Chn2_btn"))
+}
+
+function SwitchCh2()
+{
+    Chn1.hide();
+    Chn2.show();
+    AddTinySel($("#Chn2_btn"))
+    RemoveTinySel($("#Chn1_btn"))    
+}
+
 
 function setHorizontalCenter(ui,parent)
 {
@@ -90,9 +170,7 @@ function setHorizontalCenter(ui,parent)
 var GameMenu = {
 
     panel : null,
-
     mask : null,
-
     btn:null,
 
     init : function(options)
@@ -101,6 +179,9 @@ var GameMenu = {
         this.panel = $('<div>').addClass('menup').appendTo(".maskOuter");
         setHorizontalCenter(this.panel,$("#box"));
         this.panel.css('top','220px');
+
+        var el = $("<div>").css("position","absolute").css("top","18px").text(getString(24)+" : "+Engine.user+"("+Engine.nickname+")").appendTo(this.panel)
+        setHorizontalCenter(el,this.panel)
 
         var signoutBtn = CreateBtn({
             text:getString(2),
@@ -152,7 +233,14 @@ function CreateBtn(options,parent)
 {
     var el = $('<div>')
     .attr('id',options.id)
-    .addClass('btn_normal')
+    if(options.type!=undefined)
+    {
+        el.addClass('btn_link')
+    }
+    else
+    {
+        el.addClass('btn_normal')
+    }
     if(options.click!=undefined)
     {
          el.click(options.click)

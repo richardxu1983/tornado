@@ -5,6 +5,9 @@
   --middlegreen:#84aa9b;
   --sidegap:18px;
   --linecolor:#d9d9d9;
+  --rightWidtn:220px;
+  --tinygreen:#f3f8f2;
+  --leftwidth:728px;
 }
 
 @media all, screen and (orientation : landscape)
@@ -84,9 +87,10 @@
         width: 100%;
         border:1px solid var(--linecolor);
         text-align: left;
-        padding-top: 2px;
+        padding-top: 4px;
         padding-left: 4px;
         height: 25px;
+        vertical-align: middle;
     }
 
     .topBar
@@ -114,8 +118,8 @@
 
     .bagwrap
     {
-        width: 220px;
-        height: 360px;
+        width: var(--rightWidtn);
+        height: 350px;
         padding: 0;
         margin: 0;
         position: absolute;
@@ -129,7 +133,7 @@
     {
         margin-top: -1px;
         width: 100%;
-        height:60%;
+        height:70%;
         border-left: 1px solid var(--linecolor);
         border-right: 1px solid var(--linecolor);
         padding: 2px;
@@ -138,7 +142,7 @@
     .descwrap
     {
         width: 100%;
-        height:75px;
+        height:26%;
         border-left: 1px solid var(--linecolor);
         border-right: 1px solid var(--linecolor);
         border-bottom: 1px solid var(--linecolor);
@@ -147,21 +151,38 @@
     .bagdesc
     {
         width:85%;
-        height:60px; 
+        height:68px; 
         background-color: var(--lightgreen);
         margin: 0 auto;
     }
 
     .gi
     {
-        height: 315px;
-        width: 220px;
+        height: 260px;
+        width: var(--rightWidtn);
         padding: 5px;
         position: absolute;
         right: var(--sidegap);
-        bottom: var(--sidegap);
+        bottom: 59px;
         border:1px solid var(--linecolor);
         overflow: hidden;
+    }
+
+    .rlink,.blink
+    {
+        height: 35px;
+        width: var(--rightWidtn);
+        padding: 0;
+        position: absolute;
+        right: var(--sidegap);
+        top: 417px;
+        border:0;
+        overflow: hidden;
+    }
+
+    .blink
+    {
+        top: 720px;
     }
 
     #notifyGradient {
@@ -182,19 +203,38 @@
         );
     }
 
-    .bottombar
+    .statusBar,.attrBar,.bottombar,.gboard
     {
-        width: 728px;
+        width: var(--leftwidth);
         height:40px;
         left: var(--sidegap);
-        background-color: var(--lightgreen);
-        border:0;
+        border: 1px solid var(--linecolor);
         position: absolute;
-        bottom: var(--sidegap);
+        bottom: 75px;
         padding-left: 4px;
         padding-right: 4px;
+        padding-top: 4px;
+    }
+
+    .gboard
+    {
+        top: 58px;
+        height:522px;       
+    }
+
+    .attrBar
+    {
+        bottom: 114px;
+        height:65px;
+    }
+
+    .bottombar
+    {
+        height:40px;
+        background-color: var(--lightgreen);
+        border:0;
+        bottom: var(--sidegap);
         padding-top: 7px;
-        color: white;
     }
 
     .menup
@@ -370,7 +410,7 @@
         width: 100px;
         padding-top: 5px;
         color: black;
-        vertical-align: center;
+        vertical-align: middle;
         cursor: pointer;
         text-decoration: none;
         -webkit-touch-callout: none;
@@ -393,6 +433,47 @@
     div.btn_normal.disabled, div.btn_normal.disabled:hover {
         cursor: default;
         border-color: #b2b2b2;
+        color: #b2b2b2;
+        text-decoration: none;
+    }
+
+    .btn_link
+    {
+        position: relative;
+        text-align: center;
+        border: 0;
+        height: 27px;
+        width: 100px;
+        padding-top: 5px;
+        color: black;
+        vertical-align: middle;
+        cursor: pointer;
+        text-decoration: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .btn_link_sel
+    {
+        background-color: var(--tinygreen);
+        border-bottom: solid 1px var(--linecolor);
+        border-left: solid 1px var(--linecolor);
+        border-right: solid 1px var(--linecolor);
+    }
+
+    div.btn_link:hover {
+        text-decoration: underline;
+    }
+
+    div.btn_link:active {
+        background-color: var(--lightgreen);
+    }
+
+    div.btn_link.disabled, div.btn_link.disabled:hover {
         color: #b2b2b2;
         text-decoration: none;
     }

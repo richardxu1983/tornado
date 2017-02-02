@@ -24,7 +24,6 @@ class gameDay():
     def init(self):
         json_file=open('json/Day.json')
         self._jsonData = json.load(json_file)
-        print(self._jsonData)
         self._secsInHour = self._jsonData["secsInHour"]
         self._hoursInDay = self._jsonData["hoursInDay"]
         self._DaysInWeek = self._jsonData["DaysInWeek"]
@@ -52,11 +51,13 @@ class gameDay():
         if self._week >= self._WeekInSeason:
             self._week = int(self._jsonData["WeekInit"])
             self._season+=1
+            conn.set('game:season',self._season)
             conn.set('game:week',self._week)
 
         if self._season > self._SeasonInYear+1:
             self._season = 1
             self._year+=1
+            conn.set('game:season',self._season)
             conn.set('game:year',self._year)
 
         print("year:%s,season:%s,week:%s,day:%s,hour:%s"%(self._year,self._season,self._week,self._day,self._hour))
@@ -91,6 +92,14 @@ class gameDay():
         if self._week==None:
             self._week = int(self._jsonData["WeekInit"])
             conn.set('game:week',self._week)
+        else:
+            self._week = int(self._week)
+
+        #get week
+        self._season = conn.get('game:season')
+        if self._season==None:
+            self._season = 1
+            conn.set('game:season',self._season)
         else:
             self._week = int(self._week)
 

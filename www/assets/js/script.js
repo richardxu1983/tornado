@@ -12,7 +12,7 @@ var Engine =
     init : function()
     {
         //
-        Notif.init();
+        //Notif.init();
 
         //
         Engine.signinCheck();
@@ -35,40 +35,86 @@ var Engine =
         if(sta!=0)
         {
             if(sta == -1){
-                alert("用户不存在，请重新登录！")
+                alert(getString(27))
                 window.location.href = "/login";
             }else if(sta == -2){
-                alert("在别处登录了，请重新登录！")
+                alert(getString(28))
                 window.location.href = "/login";
             }
             else{
-                alert("发生未知错误，请重新登录！")
+                alert(getString(29))
                 window.location.href = "/login";
             }
         }
         else
         {
+            //登录成功
             Engine.nickname = data.nickname;
             Engine.user = data.user;
-
             //
             $('<div>').addClass('topBar').appendTo("#box");
             $('<div>').addClass('bottombar').appendTo("#box");
-            
-            //登录成功
-            GameInfo.init();
-            Env.init();
-            Env.setTime(data.year,data.season,data.week,data.day,data.hour)
+            $('<div>').addClass('rlink').appendTo("#box");
+            $('<div>').addClass('gboard').appendTo("#box");
+            $('<div>').addClass('blink').appendTo("#box");
 
-            Bag.init();
-            GameMenu.init()
+            Engine.ModuleInit(data)
             Engine.update()
+            CreateRightBtn()
+            Engine.onClickBagBtn()
+            SwitchCh1()
         }
+    },
+
+    ModuleInit :function(data)
+    {
+        Chn1.init();
+        Chn2.init();
+        Env.init();
+        Env.setTime(data.year,data.season,data.week,data.day,data.hour)
+        Status.init();
+        Attr.init();
+        Bag.init();
+        Weapon.init();
+        Equip.init();
+        GameMenu.init()
+        
+    },
+
+    onClickBagBtn : function()
+    {
+        Bag.show();
+        Weapon.hide();
+        Equip.hide();
+        AddTinySel($("#Bag_btn"))
+        RemoveTinySel($("#Weapon_btn"))
+        RemoveTinySel($("#Equip_btn"))
+
+    },
+    onClickWeaponBtn : function()
+    {
+        Bag.hide();
+        Weapon.show();
+        Equip.hide();
+        AddTinySel($("#Weapon_btn"))
+        RemoveTinySel($("#Bag_btn"))
+        RemoveTinySel($("#Equip_btn"))
+
+    },
+    onClickEquipBtn : function()
+    {
+        Bag.hide();
+        Weapon.hide();
+        Equip.show();
+        AddTinySel($("#Equip_btn"))
+        RemoveTinySel($("#Bag_btn"))
+        RemoveTinySel($("#Weapon_btn"))
+
     },
 
     onSignError : function(data)
     {
-        alert("发生未知错误，请重新登录！")
+        alert(getString(29))
         window.location.href = "/login";
     },
 
@@ -134,6 +180,65 @@ var Engine =
         });
     },*/
 };
+
+function AddTinySel(ui)
+{
+    ui.addClass("btn_link_sel")
+}
+
+function RemoveTinySel(ui)
+{
+    ui.removeClass("btn_link_sel")
+}
+
+function CreateRightBtn()
+{
+    var Bag_btn = CreateBtn({
+        text:getString(15),
+        click:Engine.onClickBagBtn,
+        id:"Bag_btn",
+        type:"link",
+    },$(".rlink"))
+    rbStyle(Bag_btn)
+
+    var Weapon_btn = CreateBtn({
+        text:getString(17),
+        click:Engine.onClickWeaponBtn,
+        id:"Weapon_btn",
+        type:"link",
+    },$(".rlink"))
+    rbStyle(Weapon_btn)
+
+    var Equip_btn = CreateBtn({
+        text:getString(16),
+        click:Engine.onClickEquipBtn,
+        id:"Equip_btn",
+        type:"link",
+    },$(".rlink"))
+    rbStyle(Equip_btn)
+
+    var Chn1_btn = CreateBtn({
+        text:getString(25),
+        click:SwitchCh1,
+        id:"Chn1_btn",
+        type:"link",
+    },$(".blink"))
+    rbStyle(Chn1_btn)
+
+    var Chn2_btn = CreateBtn({
+        text:getString(26),
+        click:SwitchCh2,
+        id:"Chn2_btn",
+        type:"link",
+    },$(".blink"))
+    rbStyle(Chn2_btn)
+}
+
+function rbStyle(ui)
+{
+    ui.css("float","left")
+    ui.css("margin-right","5px")    
+}
 
 $(
     function()

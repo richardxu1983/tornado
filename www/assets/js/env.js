@@ -32,29 +32,46 @@ var Env = {
         Env.day = day
         Env.hour = hour
         Env.season_txt = getString(3 + Env.season)
-        if(hour>=6&&hour<=18)
+        if((hour>=7&&hour<=10))
         {
             Env.day_txt = getString(11)
         }
-        else
+        else if(hour>=15&&hour<=18)
+        {
+            Env.day_txt = getString(23)
+        }
+        else if((hour>=11&&hour<=14))
+        {
+            Env.day_txt = getString(22)
+        }
+        else if(hour>=19&&hour<=24)
         {
             Env.day_txt = getString(12)
         }
-        Env.time_txt = Env.year+getString(3)+" , "+Env.season_txt+" , "+Env.week+getString(9)+" , "+Env.day+getString(10)+ " , "+Env.day_txt
+        else if(hour>=0&&hour<=4)
+        {
+            Env.day_txt = getString(20)
+        }
+        else if(hour>=5&&hour<=6)
+        {
+            Env.day_txt = getString(21)
+        }
         if(Env.hour==19&&Env.last_hour==18)
         {
-            GameInfo.print(getString(13))
+            printMsg(getString(13),1)
         }
-        if(Env.hour==6&&Env.last_hour==5)
+        if(Env.hour==7&&Env.last_hour==6)
         {
-            GameInfo.print(getString(14))
+            printMsg(getString(14),1)
         }
+        
         Env.last_hour = Env.hour
         Env.setTimeTxt()
     },
 
     setTimeTxt : function()
     {
+        Env.time_txt = Env.year+getString(3)+Env.season_txt+" , "+Env.week+getString(9)+getString(18)+Env.day+getString(10)+ " , "+Env.hour+"h : "+Env.day_txt
         Env.time_ui.text(Env.time_txt);
     },
 

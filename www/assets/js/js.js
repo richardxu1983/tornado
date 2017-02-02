@@ -13,10 +13,25 @@ text[6]="秋天"
 text[8]="冬天"
 text[9]="周"
 text[10]="天"
-text[11]="白天"
-text[12]="黑夜"
+text[11]="上午"
+text[12]="晚上"
 text[13]="天黑了..."
 text[14]="天亮了，新的一天到来了..."
+text[15]="背包"
+text[16]="装备"
+text[17]="双手"
+text[18]="零"
+text[19]="点"
+text[20]="午夜"
+text[21]="凌晨"
+text[22]="正午"
+text[23]="下午"
+text[24]="当前用户"
+text[25]="通用"
+text[26]="新闻"
+text[27]="用户不存在，请重新登录！"
+text[28]="在别处登录了，请重新登录！"
+text[29]="发生未知错误，请重新登录！"
 
 function getString(id) {
     // body...
@@ -68,23 +83,23 @@ var Notif = {
     },
 };
 
-var GameInfo = {
-
+var Chn1= {
+    elem:null,
     init : function(options)
     {
-        var elem = $('<div>').addClass('gi').appendTo("#box");
-        $('<div>').attr('id','notifyGradient').appendTo(elem);
+        Chn1.elem = $('<div>').attr("id","Chn1").addClass('gi').appendTo("#box");
+        $('<div>').attr("id",'notifyGradient').appendTo(Chn1.elem);
     },
 
     print : function(text){
 
         if(typeof text == 'undefined') return;
         //if(text.slice(-1) != ".") text += ".";
-        GameInfo.tp(text);
+        Chn1.tp(text);
     },
 
     clearHidden : function(){
-        var bottom = $('div.gi').position().top + $('div.gi').outerHeight(true);
+        var bottom = $('div.gi').position().top + $(Chn1.elem).outerHeight(true);
         $('div.gi>.devInfoTxt').each(function () {
             if($(this).position().top > bottom){
                 $(this).remove();
@@ -94,13 +109,93 @@ var GameInfo = {
 
     tp : function(t)
     {
-        var text = $('<div>').addClass('devInfoTxt').text(t).prependTo('div.gi');
-        GameInfo.clearHidden();
-        text.animate({opacity:1} , 500 , 'linear' , function(){
-            GameInfo.clearHidden();
+        var text = $('<div>').addClass('devInfoTxt').css('opacity', '0').text(t).prependTo(Chn1.elem);
+        Chn1.clearHidden();
+        text.animate({opacity:1} , 800 , 'linear' , function(){
+            Chn1.clearHidden();
         });
     },
+
+    hide:function()
+    {
+        Chn1.elem.hide()
+    },
+    show:function()
+    {
+        Chn1.elem.show()
+    },
 }
+
+var Chn2 = {
+    elem:null,
+    init : function(options)
+    {
+        Chn2.elem = $('<div>').attr("id","Chn2").addClass('gi').appendTo("#box");
+        $('<div>').attr("id",'notifyGradient').appendTo(Chn2.elem);
+    },
+
+    print : function(text){
+
+        if(typeof text == 'undefined') return;
+        //if(text.slice(-1) != ".") text += ".";
+        Chn2.tp(text);
+    },
+
+    clearHidden : function(){
+        var bottom = $('div.gi').position().top + $(Chn2.elem).outerHeight(true);
+        $('div.gi>.devInfoTxt').each(function () {
+            if($(this).position().top > bottom){
+                $(this).remove();
+            }
+        })
+    },
+
+    tp : function(t)
+    {
+        var text = $('<div>').addClass('devInfoTxt').css('opacity', '0').text(t).prependTo(Chn2.elem);
+        Chn2.clearHidden();
+        text.animate({opacity:1} , 800 , 'linear' , function(){
+            Chn2.clearHidden();
+        });
+    },
+    hide:function()
+    {
+        Chn2.elem.hide()
+    },
+    show:function()
+    {
+        Chn2.elem.show()
+    },
+}
+
+function printMsg(str,chl)
+{
+    if(chl==1)
+    {
+        Chn1.print(str)
+    }
+    else
+    {
+        Chn2.print(str)
+    }
+}
+
+function SwitchCh1()
+{
+    Chn2.hide();
+    Chn1.show();
+    AddTinySel($("#Chn1_btn"))
+    RemoveTinySel($("#Chn2_btn"))
+}
+
+function SwitchCh2()
+{
+    Chn1.hide();
+    Chn2.show();
+    AddTinySel($("#Chn2_btn"))
+    RemoveTinySel($("#Chn1_btn"))    
+}
+
 
 function setHorizontalCenter(ui,parent)
 {
@@ -113,9 +208,7 @@ function setHorizontalCenter(ui,parent)
 var GameMenu = {
 
     panel : null,
-
     mask : null,
-
     btn:null,
 
     init : function(options)
@@ -124,6 +217,9 @@ var GameMenu = {
         this.panel = $('<div>').addClass('menup').appendTo(".maskOuter");
         setHorizontalCenter(this.panel,$("#box"));
         this.panel.css('top','220px');
+
+        var el = $("<div>").css("position","absolute").css("top","18px").text(getString(24)+" : "+Engine.user+"("+Engine.nickname+")").appendTo(this.panel)
+        setHorizontalCenter(el,this.panel)
 
         var signoutBtn = CreateBtn({
             text:getString(2),
@@ -175,7 +271,14 @@ function CreateBtn(options,parent)
 {
     var el = $('<div>')
     .attr('id',options.id)
-    .addClass('btn_normal')
+    if(options.type!=undefined)
+    {
+        el.addClass('btn_link')
+    }
+    else
+    {
+        el.addClass('btn_normal')
+    }
     if(options.click!=undefined)
     {
          el.click(options.click)
@@ -301,20 +404,108 @@ jQuery.postJSON = function(url, args, callback,fail) {
 var Bag = {
 
     ui : null,
-
     cells : null,
-
     desc : null,
-
-    title_txt : "背包 [ 0/16 ]",
+    title_txt : getString(15)+" [ 0/16 ]",
 
     init : function(options)
     {
-        ui = $('<div>').addClass('bagwrap').appendTo("#box");
-        $('<div>').addClass('titlewrap').text(Bag.title_txt).appendTo('.bagwrap');
-        cells = $('<div>').addClass('bagcells').appendTo('.bagwrap');
-        $('<div>').addClass('descwrap').appendTo('.bagwrap');
-        desc = $('<div>').addClass('bagdesc').appendTo('.descwrap');
+        Bag.ui = $('<div>').addClass('bagwrap').attr('id','BagPanel').appendTo("#box");
+        $('<div>').addClass('titlewrap').text(Bag.title_txt).appendTo(Bag.ui);
+        Bag.cells = $('<div>').addClass('bagcells').appendTo('.bagwrap');
+        $('<div>').addClass('descwrap').attr('id','Bagdewr').appendTo('.bagwrap');
+        Bag.desc = $('<div>').addClass('bagdesc').appendTo('#Bagdewr');
+        Bag.hide()
+    },
+
+    hide : function()
+    {
+        Bag.ui.hide()
+    },
+
+    show : function()
+    {
+        Bag.ui.show()
+    },
+}
+
+var Weapon = {
+
+    ui : null,
+    cells : null,
+    desc : null,
+    title_txt : getString(17),
+
+    init : function(options)
+    {
+        Weapon.ui = $('<div>').addClass('bagwrap').attr('id','WeaponPanel').appendTo("#box");
+        $('<div>').addClass('titlewrap').text(Weapon.title_txt).appendTo(Weapon.ui);
+        Weapon.cells = $('<div>').addClass('bagcells').appendTo('#WeaponPanel');
+        $('<div>').addClass('descwrap').attr('id','Weapondewr').appendTo('#WeaponPanel');
+        Weapon.desc = $('<div>').addClass('bagdesc').appendTo('#Weapondewr');
+        Weapon.hide()
+    },
+
+    hide : function()
+    {
+        Weapon.ui.hide()
+    },
+
+    show : function()
+    {
+        Weapon.ui.show()
+    },
+}
+
+var Equip = {
+
+    ui : null,
+    cells : null,
+    desc : null,
+    title_txt : getString(16),
+
+    init : function(options)
+    {
+        Equip.ui = $('<div>').addClass('bagwrap').attr('id','EquipPanel').appendTo("#box");
+        $('<div>').addClass('titlewrap').text(Equip.title_txt).appendTo(Equip.ui);
+        Equip.cells = $('<div>').addClass('bagcells').appendTo('#EquipPanel');
+        $('<div>').addClass('descwrap').attr('id','Equipdewr').appendTo('#EquipPanel');
+        Equip.desc = $('<div>').addClass('bagdesc').appendTo('#Equipdewr');
+        Equip.hide()
+    },
+
+    hide : function()
+    {
+        Equip.ui.hide()
+    },
+
+    show : function()
+    {
+        Equip.ui.show()
+    },
+}/**
+ * Created by 95 on 2016/3/7.
+ */
+
+var Status = {
+
+    ui : null,
+
+    init : function(options)
+    {
+        Status.ui = $('<div>').addClass('statusBar').appendTo("#box");
+    },
+}/**
+ * Created by 95 on 2016/3/7.
+ */
+
+var Attr = {
+
+    ui : null,
+
+    init : function(options)
+    {
+        Attr.ui = $('<div>').addClass('attrBar').appendTo("#box");
     },
 }/**
  * Created by 95 on 2016/3/7.
@@ -350,29 +541,46 @@ var Env = {
         Env.day = day
         Env.hour = hour
         Env.season_txt = getString(3 + Env.season)
-        if(hour>=6&&hour<=18)
+        if((hour>=7&&hour<=10))
         {
             Env.day_txt = getString(11)
         }
-        else
+        else if(hour>=15&&hour<=18)
+        {
+            Env.day_txt = getString(23)
+        }
+        else if((hour>=11&&hour<=14))
+        {
+            Env.day_txt = getString(22)
+        }
+        else if(hour>=19&&hour<=24)
         {
             Env.day_txt = getString(12)
         }
-        Env.time_txt = Env.year+getString(3)+" , "+Env.season_txt+" , "+Env.week+getString(9)+" , "+Env.day+getString(10)+ " , "+Env.day_txt
+        else if(hour>=0&&hour<=4)
+        {
+            Env.day_txt = getString(20)
+        }
+        else if(hour>=5&&hour<=6)
+        {
+            Env.day_txt = getString(21)
+        }
         if(Env.hour==19&&Env.last_hour==18)
         {
-            GameInfo.print(getString(13))
+            printMsg(getString(13),1)
         }
-        if(Env.hour==6&&Env.last_hour==5)
+        if(Env.hour==7&&Env.last_hour==6)
         {
-            GameInfo.print(getString(14))
+            printMsg(getString(14),1)
         }
+        
         Env.last_hour = Env.hour
         Env.setTimeTxt()
     },
 
     setTimeTxt : function()
     {
+        Env.time_txt = Env.year+getString(3)+Env.season_txt+" , "+Env.week+getString(9)+getString(18)+Env.day+getString(10)+ " , "+Env.hour+"h : "+Env.day_txt
         Env.time_ui.text(Env.time_txt);
     },
 
@@ -394,7 +602,7 @@ var Engine =
     init : function()
     {
         //
-        Notif.init();
+        //Notif.init();
 
         //
         Engine.signinCheck();
@@ -417,40 +625,86 @@ var Engine =
         if(sta!=0)
         {
             if(sta == -1){
-                alert("用户不存在，请重新登录！")
+                alert(getString(27))
                 window.location.href = "/login";
             }else if(sta == -2){
-                alert("在别处登录了，请重新登录！")
+                alert(getString(28))
                 window.location.href = "/login";
             }
             else{
-                alert("发生未知错误，请重新登录！")
+                alert(getString(29))
                 window.location.href = "/login";
             }
         }
         else
         {
+            //登录成功
             Engine.nickname = data.nickname;
             Engine.user = data.user;
-
             //
             $('<div>').addClass('topBar').appendTo("#box");
             $('<div>').addClass('bottombar').appendTo("#box");
-            
-            //登录成功
-            GameInfo.init();
-            Env.init();
-            Env.setTime(data.year,data.season,data.week,data.day,data.hour)
+            $('<div>').addClass('rlink').appendTo("#box");
+            $('<div>').addClass('gboard').appendTo("#box");
+            $('<div>').addClass('blink').appendTo("#box");
 
-            Bag.init();
-            GameMenu.init()
+            Engine.ModuleInit(data)
             Engine.update()
+            CreateRightBtn()
+            Engine.onClickBagBtn()
+            SwitchCh1()
         }
+    },
+
+    ModuleInit :function(data)
+    {
+        Chn1.init();
+        Chn2.init();
+        Env.init();
+        Env.setTime(data.year,data.season,data.week,data.day,data.hour)
+        Status.init();
+        Attr.init();
+        Bag.init();
+        Weapon.init();
+        Equip.init();
+        GameMenu.init()
+        
+    },
+
+    onClickBagBtn : function()
+    {
+        Bag.show();
+        Weapon.hide();
+        Equip.hide();
+        AddTinySel($("#Bag_btn"))
+        RemoveTinySel($("#Weapon_btn"))
+        RemoveTinySel($("#Equip_btn"))
+
+    },
+    onClickWeaponBtn : function()
+    {
+        Bag.hide();
+        Weapon.show();
+        Equip.hide();
+        AddTinySel($("#Weapon_btn"))
+        RemoveTinySel($("#Bag_btn"))
+        RemoveTinySel($("#Equip_btn"))
+
+    },
+    onClickEquipBtn : function()
+    {
+        Bag.hide();
+        Weapon.hide();
+        Equip.show();
+        AddTinySel($("#Equip_btn"))
+        RemoveTinySel($("#Bag_btn"))
+        RemoveTinySel($("#Weapon_btn"))
+
     },
 
     onSignError : function(data)
     {
-        alert("发生未知错误，请重新登录！")
+        alert(getString(29))
         window.location.href = "/login";
     },
 
@@ -516,6 +770,65 @@ var Engine =
         });
     },*/
 };
+
+function AddTinySel(ui)
+{
+    ui.addClass("btn_link_sel")
+}
+
+function RemoveTinySel(ui)
+{
+    ui.removeClass("btn_link_sel")
+}
+
+function CreateRightBtn()
+{
+    var Bag_btn = CreateBtn({
+        text:getString(15),
+        click:Engine.onClickBagBtn,
+        id:"Bag_btn",
+        type:"link",
+    },$(".rlink"))
+    rbStyle(Bag_btn)
+
+    var Weapon_btn = CreateBtn({
+        text:getString(17),
+        click:Engine.onClickWeaponBtn,
+        id:"Weapon_btn",
+        type:"link",
+    },$(".rlink"))
+    rbStyle(Weapon_btn)
+
+    var Equip_btn = CreateBtn({
+        text:getString(16),
+        click:Engine.onClickEquipBtn,
+        id:"Equip_btn",
+        type:"link",
+    },$(".rlink"))
+    rbStyle(Equip_btn)
+
+    var Chn1_btn = CreateBtn({
+        text:getString(25),
+        click:SwitchCh1,
+        id:"Chn1_btn",
+        type:"link",
+    },$(".blink"))
+    rbStyle(Chn1_btn)
+
+    var Chn2_btn = CreateBtn({
+        text:getString(26),
+        click:SwitchCh2,
+        id:"Chn2_btn",
+        type:"link",
+    },$(".blink"))
+    rbStyle(Chn2_btn)
+}
+
+function rbStyle(ui)
+{
+    ui.css("float","left")
+    ui.css("margin-right","5px")    
+}
 
 $(
     function()

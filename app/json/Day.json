@@ -3,11 +3,11 @@
     "dayInit": 1,
 	"WeekInit": 1,
     "hourInit": 0,
-    "secsInHour": 5,
+    "secsInHour": 10,
     "hoursInDay": 24,
     "DaysInYear": 120,
 	"DaysInWeek": 7,
-	"WeekInSeason": 12,
+	"WeekInSeason": 15,
 	"SeasonInYear": 4,
     "Season": [
         "1",
