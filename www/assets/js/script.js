@@ -6,6 +6,8 @@ var Debug = true;
 
 var Engine = 
 {
+    nickname : null,
+    user : null,
 
     init : function()
     {
@@ -46,27 +48,53 @@ var Engine =
         }
         else
         {
+            Engine.nickname = data.nickname;
+            Engine.user = data.user;
+
             //
             $('<div>').addClass('topBar').appendTo("#box");
             $('<div>').addClass('bottombar').appendTo("#box");
             
             //登录成功
             GameInfo.init();
-
-            //
             Env.init();
+            Env.setTime(data.year,data.season,data.week,data.day,data.hour)
 
-            //
             Bag.init();
-
             GameMenu.init()
+            Engine.update()
         }
     },
 
     onSignError : function(data)
     {
-
+        alert("发生未知错误，请重新登录！")
+        window.location.href = "/login";
     },
+
+    update :function()
+    {
+        var data = 
+        {
+            session:document.session,
+            action:'update',
+        };
+        jQuery.postJSON("./",data,Engine.onUpdateBack,Engine.onUpdateError)
+    },
+
+    onUpdateBack:function(data)
+    {
+        var sta = parseInt(data.sta);
+        if(sta!=0)
+        {
+
+        }
+        else
+        {
+            Env.setTime(data.year,data.season,data.week,data.day,data.hour)
+            setTimeout(Engine.update,1000);
+        }
+    }
 
 /*
     update : function()

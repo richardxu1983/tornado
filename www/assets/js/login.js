@@ -67,7 +67,14 @@ function checkIsEMail(s) {
     if (!patrn.exec(s)) return false
     return true
 }
- 
+
+function checkIsNickName(s)
+{
+    var patrn = /^[\u4e00-\u9fa5a-zA-Z]{3,8}$/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
 //
 function enc(s)
 {
@@ -106,12 +113,14 @@ var Login = {
         var inst_html = "";
         inst_html = "<div class='signTitle'><a id='nav_signup'>注册</a><a id='nav_signin'>登录</a></div>";
         inst_html+="<div id='singnwrapper'><div class='input-wrapper' id='usernamewrapper'>"
-        inst_html+="<input type='text' id='username' class='form-control' placeholder='用户名' required autofocus></div> "
+        inst_html+="<input type='text' id='username' class='form-control' placeholder='登录名' required autofocus></div> "
         inst_html+="<div class='input-wrapper' id='pwdwrapper'>"
         inst_html+="<input type='password' id='inputPassword' class='form-control' placeholder='密码' required></div>"
         inst_html+="<button class='btn btn-lg btn-primary btn-block' id='signinBtn' >登录</button><div class='errormsg' id='signinerror'></div></div>"
         inst_html+="<div id='regwrapper'><div class='input-wrapper' id='susernamewrapper'>"
-        inst_html+="<input type='text' id='susername' class='form-control' placeholder='用户名' required autofocus></div> "
+        inst_html+="<input type='text' id='susername' class='form-control' placeholder='登录名' required autofocus></div> "
+        inst_html+="<div class='input-wrapper' id='snicknamewrapper'>"
+        inst_html+="<input type='text' id='snickname' class='form-control' placeholder='游戏昵称' required autofocus></div>"
         inst_html+="<div class='input-wrapper' id='spwdwrapper'>"
         inst_html+="<input type='password' id='sinputPassword' class='form-control' placeholder='密码' required></div>"
         inst_html+="<div class='input-wrapper' id='srpwdwrapper'><input type='password' id='repeatPassword' class='form-control' placeholder='重复密码' required></div>"
@@ -135,6 +144,11 @@ var Login = {
         $('#susername').focus(function(){
             Login.delError('#susernamewrapper');
             $('#susername').val("");
+            Login.clearError("#signuperror")
+        })
+        $('#snickname').focus(function(){
+            Login.delError('#snicknamewrapper');
+            $('#snickname').val("");
             Login.clearError("#signuperror")
         })
         $('#sinputPassword').focus(function(){
@@ -212,10 +226,12 @@ var Login = {
             return;
 
         var uname = $('#susername').val();
+        var unick = $('#snickname').val();
         var spwd = $('#sinputPassword').val();
         var srpwd = $('#repeatPassword').val();
 
         var bNameValid = checkIsRegisterUserName(uname);
+        var bNickValid = checkIsNickName(unick);
         var bPwdValid = checkIsPasswd(spwd);
         var bIsSame = (spwd==srpwd);
 
@@ -223,7 +239,10 @@ var Login = {
         {
             Login.addError('#susernamewrapper','用户名为4-20位英文数字');
         }
-
+        if(!bNickValid)
+        {
+            Login.addError('#snicknamewrapper','昵称为3-8位中文英文');
+        }
         if(!bPwdValid)
         {
             Login.addError('#spwdwrapper','密码为6-20位英文数字');
@@ -241,7 +260,7 @@ var Login = {
             return;
         }
         
-        if(bNameValid&&bPwdValid&&bIsSame)
+        if(bNameValid&&bPwdValid&&bIsSame&&bNickValid)
         {
             Login.ing = true;
             var data = 
@@ -250,6 +269,7 @@ var Login = {
                     action:'signup',
                     name:uname,
                     pwd:spwd,
+                    nick:unick,
                 };
             jQuery.postJSON("./login",data,Login.onSignupBack,Login.onSignError)           
         }
@@ -265,6 +285,8 @@ var Login = {
                 Login.printError("#signuperror","用户名或密码为空,请重新输入!")
             }else if(sta == -4){
                 Login.printError("#signuperror","用户名已被占用，请换个名字")
+            }else if(sta == -5){
+                Login.printError("#signuperror","昵称已被占用，请换个名字")
             }else if(sta == -99){
                 Login.printError("#signuperror","服务器忙")
             }else {

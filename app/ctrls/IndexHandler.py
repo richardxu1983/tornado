@@ -5,7 +5,8 @@ from uuid import uuid4
 import random
 import tornado.web
 
-from  game.gs import GS;
+from game.gs import GS;
+from game.gday import GDay
 from  tools.dbase import conn;
 import time;
 
@@ -42,8 +43,30 @@ class indexHandler(BasicCtrl):
             conn.hmset('user:%s'%id,{
                 'signin':time.time(),
                 })
+
+            nickname = conn.hmget('user:%s'%id,'nickname')
+            
             #print(time.asctime( time.localtime(float(conn.hmget('user:%s'%id,'signin')[0]))))
-            self.write({"sta": "0"})   # 在别处登录了
+            self.write({
+            "sta": 0,
+            "nickname":nickname,
+            "user":username,
+            "year":GDay._year,
+            "season":GDay._season,
+            "week":GDay._week,
+            "day":GDay._day,
+            "hour":GDay._hour,
+            })   # 在别处登录了
             self.finish()
             return
+        if action == 'update':
+            self.write({
+            "sta": 0,
+            "year":GDay._year,
+            "season":GDay._season,
+            "week":GDay._week,
+            "day":GDay._day,
+            "hour":GDay._hour,
+            })   # 在别处登录了
+            self.finish()
         pass

@@ -6,6 +6,17 @@ var text=new Array();
 text[0]="系 统"
 text[1]="返 回"
 text[2]="退出登录"
+text[3]="年"
+text[4]="春天"
+text[5]="夏天"
+text[6]="秋天"
+text[8]="冬天"
+text[9]="周"
+text[10]="天"
+text[11]="白天"
+text[12]="黑夜"
+text[13]="天黑了..."
+text[14]="天亮了，新的一天到来了..."
 
 function getString(id) {
     // body...
@@ -201,11 +212,18 @@ function checkIshanzi(s) {
  
 //校验登录名：只能输入4-20个以字母开头、可带数字、“_”、“.”的字串
 function checkIsRegisterUserName(s) {
-    var patrn = /^[a-zA-Z]{1}([a-zA-Z0-9]|[._]){3,19}$/;
+    var patrn = /^([a-zA-Z0-9]|[._]){4,20}$/;
     if (!patrn.exec(s)) return false
     return true
 }
  
+function checkIsNickName(s)
+{
+    var patrn = /^[\u4e00-\u9fa5a-zA-Z]{3,8}$/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
 //校验用户姓名：只能输入4-30个以字母开头的字串
 function checkIsTrueName(s) {
     var patrn = /^[a-zA-Z]{4,30}$/;
@@ -257,14 +275,6 @@ function checkIsEMail(s) {
     return true
 }
 
-//获取文字宽度
-function getTextWidth(text)
-{
-    var ruler = $("#ruler"); 
-    ruler.text(text); 
-    return ruler.width(); 
-}
- 
 //
 function enc(s)
 {
@@ -313,26 +323,57 @@ var Bag = {
 var Env = {
 
     time_ui : null,
-
     pos_ui : null,
-
     time_txt : "1001年 , 第1天 , 白天 [ 春天 - 晴朗 ]",
-
     pos_txt : "奥丁城郊外 [12,35] - 自己的家",
-
+    year:null,
+    season : null,
+    week : null,
     day : 0,
-
     hour : 0,
+    last_hour : 0,
+    season_txt : null,
+    day_txt:null,
 
     init : function(options)
     {
-        time_ui = $('<div>').addClass('wrd').text(Env.time_txt).css("left","8px").appendTo(".topBar");
-        pos_ui = $('<div>').addClass('wrd').text(Env.pos_txt).css("right","18px").appendTo(".topBar");
+        Env.time_ui = $('<div>').addClass('wrd').css("left","8px").appendTo(".topBar");
+        Env.pos_ui = $('<div>').addClass('wrd').text(Env.pos_txt).css("right","18px").appendTo(".topBar");
+        Env.time_ui.text(Env.time_txt);
     },
 
-    setTimeTxt : function(str)
+    setTime : function(year,season,week,day,hour)
     {
-        Env.time_ui.text(str);
+        Env.year = year
+        Env.season = season
+        Env.week = week
+        Env.day = day
+        Env.hour = hour
+        Env.season_txt = getString(3 + Env.season)
+        if(hour>=6&&hour<=18)
+        {
+            Env.day_txt = getString(11)
+        }
+        else
+        {
+            Env.day_txt = getString(12)
+        }
+        Env.time_txt = Env.year+getString(3)+" , "+Env.season_txt+" , "+Env.week+getString(9)+" , "+Env.day+getString(10)+ " , "+Env.day_txt
+        if(Env.hour==19&&Env.last_hour==18)
+        {
+            GameInfo.print(getString(13))
+        }
+        if(Env.hour==6&&Env.last_hour==5)
+        {
+            GameInfo.print(getString(14))
+        }
+        Env.last_hour = Env.hour
+        Env.setTimeTxt()
+    },
+
+    setTimeTxt : function()
+    {
+        Env.time_ui.text(Env.time_txt);
     },
 
     setPosTxt : function(str)
@@ -347,6 +388,8 @@ var Debug = true;
 
 var Engine = 
 {
+    nickname : null,
+    user : null,
 
     init : function()
     {
@@ -387,27 +430,53 @@ var Engine =
         }
         else
         {
+            Engine.nickname = data.nickname;
+            Engine.user = data.user;
+
             //
             $('<div>').addClass('topBar').appendTo("#box");
             $('<div>').addClass('bottombar').appendTo("#box");
             
             //登录成功
             GameInfo.init();
-
-            //
             Env.init();
+            Env.setTime(data.year,data.season,data.week,data.day,data.hour)
 
-            //
             Bag.init();
-
             GameMenu.init()
+            Engine.update()
         }
     },
 
     onSignError : function(data)
     {
-
+        alert("发生未知错误，请重新登录！")
+        window.location.href = "/login";
     },
+
+    update :function()
+    {
+        var data = 
+        {
+            session:document.session,
+            action:'update',
+        };
+        jQuery.postJSON("./",data,Engine.onUpdateBack,Engine.onUpdateError)
+    },
+
+    onUpdateBack:function(data)
+    {
+        var sta = parseInt(data.sta);
+        if(sta!=0)
+        {
+
+        }
+        else
+        {
+            Env.setTime(data.year,data.season,data.week,data.day,data.hour)
+            setTimeout(Engine.update,1000);
+        }
+    }
 
 /*
     update : function()

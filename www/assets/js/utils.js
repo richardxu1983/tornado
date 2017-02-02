@@ -189,11 +189,18 @@ function checkIshanzi(s) {
  
 //校验登录名：只能输入4-20个以字母开头、可带数字、“_”、“.”的字串
 function checkIsRegisterUserName(s) {
-    var patrn = /^[a-zA-Z]{1}([a-zA-Z0-9]|[._]){3,19}$/;
+    var patrn = /^([a-zA-Z0-9]|[._]){4,20}$/;
     if (!patrn.exec(s)) return false
     return true
 }
  
+function checkIsNickName(s)
+{
+    var patrn = /^[\u4e00-\u9fa5a-zA-Z]{3,8}$/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
 //校验用户姓名：只能输入4-30个以字母开头的字串
 function checkIsTrueName(s) {
     var patrn = /^[a-zA-Z]{4,30}$/;
@@ -245,14 +252,6 @@ function checkIsEMail(s) {
     return true
 }
 
-//获取文字宽度
-function getTextWidth(text)
-{
-    var ruler = $("#ruler"); 
-    ruler.text(text); 
-    return ruler.width(); 
-}
- 
 //
 function enc(s)
 {

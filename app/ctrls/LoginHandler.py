@@ -62,6 +62,7 @@ class LoginHandler(BasicCtrl):
             conn.hmset('user:%s'%id,{
                 'signin':time.time(),
                 })
+
             self.set_current_user(username)
             self.set_current_login_code(login_code)
             self.write('{"sta": 0}')
@@ -71,17 +72,19 @@ class LoginHandler(BasicCtrl):
         if action == 'signup': #注册用户
 
             username = self.get_argument('name')
+            nickname = self.get_argument('nick')
             passwordAdd = self.get_argument('pwd') #提交上来的密码，已被md5过
             u_id = self.random_number()
             u_salt = self.random_salt()
             u_password_hash = self.result_hash(username=username, password=passwordAdd, salt=u_salt)
 
-            if not username or not passwordAdd:
-                self.write({"sta": "-3"})   # 表示账号或密码为空
+            if not username or not passwordAdd or not nickname:
+                self.write({"sta": "-3"})   # 表示账号或密码或昵称为空
                 self.finish()
                 return
 
             username = username.lower()
+            nickname = nickname.lower()
             lock = acquire_lock_with_timeout(conn, 'user:'+username,1)
 
             if not lock:
@@ -95,14 +98,22 @@ class LoginHandler(BasicCtrl):
                 self.finish()
                 return
 
+            if conn.hget('nicknames:',nickname):
+                tools.dbase.release_lock(conn,'user:'+username, lock)
+                self.write({"sta": "-5"})   # 昵称已被占用
+                self.finish()
+                return
+
             id = conn.incr('user:id:')
             pipeline = conn.pipeline(True)
             pipeline.hset('users:',username,id)
+            pipeline.hset('nicknames:',nickname,id)
             pipeline.hmset('user:%s'%id,{
                 'username':username,
                 'u_salt':u_salt,
                 'u_id':u_id,
                 'u_password_hash':u_password_hash,
+                'nickname':nickname,
                 'signup':time.time(),
                 })
             pipeline.execute()

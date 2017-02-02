@@ -32,10 +32,9 @@ define("port", default=8000, help="run on the given port", type=int)
 
 
 def foo():
-	if GS.bGSon:
-		GS.update();
-		#print(GS.day());
-		tornado.ioloop.IOLoop.instance().add_timeout(time.time()+1, foo)
+    if GS.bGSon:
+        GS.update();
+        tornado.ioloop.IOLoop.instance().add_timeout(time.time()+1, foo)
 
 def main():
 

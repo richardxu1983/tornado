@@ -24,7 +24,7 @@ conn = redis.Redis(host='localhost', port=6379, db=0)
 info = conn.info()
 print '\ndbsize: %s' % conn.dbsize()
 print "ping %s" % conn.ping()
-print(conn.keys())
+#print(conn.flushdb())
 
 #print(time.asctime( time.localtime(time.time()) ))
 
