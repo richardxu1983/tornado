@@ -1,0 +1,30 @@
+{
+    "home": {
+        "initSlot":"12",
+        "function": 
+        [
+            {
+                "type":"viewFacilities"
+            },
+            {
+                "type":"build",
+                "id":"1"
+            },
+            {
+                "type":"expand",
+                "id":"1"
+            },
+            {
+                "type":"store",
+                "id":"1"
+            }
+        ],
+        "initFacilities": 
+        [
+            {
+                "type":"bed",
+                "id":"1"
+            }
+        ]
+    }
+}

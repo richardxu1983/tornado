@@ -3,7 +3,7 @@
     "dayInit": 1,
 	"WeekInit": 1,
     "hourInit": 0,
-    "secsInHour": 10,
+    "secsInHour": 30,
     "hoursInDay": 24,
     "DaysInYear": 120,
 	"DaysInWeek": 7,

@@ -1,0 +1,50 @@
+{
+    "build": {
+        "1": [
+            {
+                "type": "bed",
+                "id": "1"
+            },
+            {
+                "type": "operationTable",
+                "id": "1"
+            },
+            {
+                "type": "cookTable",
+                "id": "1"
+            }
+        ]
+    },
+    "expand": {
+        "1": {
+            "type": "slotAdd",
+            "Multi": true,
+            "MaxTime": 3,
+            "data": [
+                "4",
+                "4",
+                "4"
+            ],
+            "cost": {
+                "wood": "120",
+                "stone": "64",
+                "Multi": "1.5"
+            }
+        }
+    },
+    "store": {
+        "1": {
+            "room": "20",
+            "upgrade": true,
+            "upgradeTo": "2",
+            "cost": {
+                "wood": "120",
+                "stone": "64"
+            }
+        },
+        "2": {
+            "room": "28",
+            "upgrade": false
+        }
+    }
+}
