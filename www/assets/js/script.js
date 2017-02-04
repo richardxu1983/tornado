@@ -72,13 +72,12 @@ var Engine =
         Chn2.init();
         Env.init();
         Env.setTime(data.year,data.season,data.week,data.day,data.hour)
-        Status.init();
-        Attr.init();
+        StatusView.init();
+        AttrView.init();
         Bag.init();
         Weapon.init();
         Equip.init();
         GameMenu.init()
-        
     },
 
     onClickBagBtn : function()

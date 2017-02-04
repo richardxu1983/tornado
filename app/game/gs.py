@@ -3,6 +3,7 @@ from  tools.dbase import conn;
 import tornado
 
 from gday import GDay
+from role import ROLE
 
 class gameServer():
 
@@ -22,6 +23,7 @@ class gameServer():
 
     def start(self):
         GDay.init()
+        ROLE.init()
         self.readDB()
         self.bGSon = True
 
