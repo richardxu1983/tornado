@@ -8,6 +8,7 @@
   --rightWidtn:220px;
   --tinygreen:#f3f8f2;
   --leftwidth:728px;
+  --dangercolor:#c33;
 }
 
 @media all, screen and (orientation : landscape)
@@ -476,6 +477,43 @@
     div.btn_link.disabled, div.btn_link.disabled:hover {
         color: #b2b2b2;
         text-decoration: none;
+    }
+
+    .attrwrap,.propwrap
+    {
+        position: absolute;
+        border:0;
+        text-align: left;
+        width: 100px;
+        height: 20px;
+        padding-top: 2px;
+        overflow: hidden;
+    }
+
+    .propwrap
+    {
+        text-align:right;
+    }
+
+    .attrlabel,.attrvalue,.proplabel
+    {
+        float:left;
+        height: 100%;
+        width: 35px;
+        overflow: hidden;
+        text-align: center;
+        color: #666;
+    }
+
+    .danger
+    {
+        color: var(--dangercolor);
+    }
+
+    .attrvalue
+    {
+        margin-left: 5px;
+        text-align: left;
     }
 }
 

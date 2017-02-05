@@ -8,6 +8,6 @@ var StatusView = {
 
     init : function(options)
     {
-        Status.ui = $('<div>').addClass('statusBar').appendTo("#box");
+        StatusView.ui = $('<div>').addClass('statusBar').appendTo("#box");
     },
 }

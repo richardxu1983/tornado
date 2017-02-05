@@ -51,19 +51,27 @@ var Engine =
             //登录成功
             Engine.nickname = data.nickname;
             Engine.user = data.user;
-            //
-            $('<div>').addClass('topBar').appendTo("#box");
-            $('<div>').addClass('bottombar').appendTo("#box");
-            $('<div>').addClass('rlink').appendTo("#box");
-            $('<div>').addClass('gboard').appendTo("#box");
-            $('<div>').addClass('blink').appendTo("#box");
+
+            Engine.initBarUI('topBar')
+            Engine.initBarUI('bottombar')
+            Engine.initBarUI('rlink')
+            Engine.initBarUI('gboard')
+            Engine.initBarUI('blink')
 
             Engine.ModuleInit(data)
             Engine.update()
             CreateRightBtn()
             Engine.onClickBagBtn()
             SwitchCh1()
+            Role.AttrInit(data.attr)
+            Role.GoldSet(data.gold)
+            //Role.AttrSet("hp",5);
         }
+    },
+
+    initBarUI:function(bar)
+    {
+        $('<div>').addClass(bar).appendTo("#box");
     },
 
     ModuleInit :function(data)
@@ -127,6 +135,21 @@ var Engine =
         jQuery.postJSON("./",data,Engine.onUpdateBack,Engine.onUpdateError)
     },
 
+    sendRest:function()
+    {
+        var data = 
+        {
+            session:document.session,
+            action:'resetAttr',
+        };
+        jQuery.postJSON("./",data,Engine.onsendRestBack,Engine.onUpdateError)        
+    },
+
+    onsendRestBack:function(data)
+    {
+        Role.AttrInit(data.attr)
+    },
+
     onUpdateBack:function(data)
     {
         var sta = parseInt(data.sta);
@@ -137,9 +160,10 @@ var Engine =
         else
         {
             Env.setTime(data.year,data.season,data.week,data.day,data.hour)
+            Role.AttrInit(data.attr)
             setTimeout(Engine.update,1000);
         }
-    }
+    },
 
 /*
     update : function()

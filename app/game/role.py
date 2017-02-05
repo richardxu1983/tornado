@@ -1,11 +1,17 @@
 #
+import tools
 from  tools.dbase import conn;
-import tornado
+from tools.dbase import acquire_lock_with_timeout
+import json
+import os
+import time
+import datetime
 
 
 class gamerole():
     def __init__(self):
         self._jsonData = None
+        self.initGold=0,
         self.initHP = 0,
         self.initFed = 0,
         self.initFed = 0,
@@ -23,17 +29,65 @@ class gamerole():
         self.initFed = self._jsonData["fed"],
         self.initColdResist=self._jsonData["coldResist"],
         self.initAtk=self._jsonData["atk"],
-        self.initDef=self._jsonData["def"],
+        self.initDef=self._jsonData["defence"],
         self.equipSlot=self._jsonData["equipSlot"],
         self.weaponSlot=self._jsonData["weaponSlot"],
+        self.initGold=self._jsonData["gold"],
+        self.fedData = self._jsonData["fedData"],
+
+    def roleAttrGet(self,id,key):
+        attr = conn.hmget('role:attr:%s'%id,key)
+        return attr[0]
+
+    def roleAttrSet(self,id,key,value):
+        conn.hmset('role:attr:%s'%id,key,value)
+
+    def roleGold(self,id):
+        gold = conn.hmget('role:basic:%s'%id,'gold')
+        return gold[0]
+
+    def roleGoldSet(self,id,value):
+        conn.hmset('role:basic:%s'%id,'gold',value)
+
+    def roleFedUpdate(self,id):
+        tick = conn.get('role:fed_tick:%s'%id)
+        tick = datetime.datetime.strptime(tick,'%Y-%m-%d %H:%M:%S.%f')
+        tick_now = datetime.datetime.now()
+        sec = (tick_now - tick).seconds
+        sec_single=self.fedData[0]["sec"]
+        if sec>=sec_single:
+            conn.set('role:fed_tick:%s'%id,tick_now)
+            fed_toreduce=sec/sec_single
+            fed=conn.hmget('role:attr:%s'%id,'fed')
+            fed=int(fed[0])
+            fed-=fed_toreduce
+            if fed<=0:
+                fed=0
+            conn.hmset('role:attr:%s'%id,{'fed':fed})
+    
+    def roleSetFedTime(self,id):
+        conn.set('role:fed_tick:%s'%id,datetime.datetime.now())
+
+    def resetAttr(self,id):
+        conn.hmset(
+            'role:attr:%s'%id,{
+            'hp':self.initHP[0],
+            'fed':self.initFed[0],
+            'coldResist':self.initColdResist[0],
+            'atk':self.initAtk[0],
+            'def':self.initDef[0],
+            })
+        
 
     def createNewRoleToDB(self,nickname,id):
         t = time.time()
         lock = acquire_lock_with_timeout(conn, 'nickname:'+nickname,1)
         pipeline = conn.pipeline(True)
+        conn.set('role:fed_tick:%s'%id,datetime.datetime.now())
         pipeline.hmset(
             'role:basic:%s'%id,{
             'nickname':nickname,
+            'gold':self.initGold[0],
             'createTime':t,
             })
         pipeline.hmset(
@@ -48,13 +102,14 @@ class gamerole():
             'status':0,
             'atFunction':"viewFacilities",
             })
+        #print("set!!!self.initHP=%s,type=%s,self.initHP[0]=%s"%(self.initHP,type(self.initHP),self.initHP[0]))
         pipeline.hmset(
             'role:attr:%s'%id,{
-            'hp':self.initHP,
-            'fed':self.initFed,
-            'coldResist':self.initColdResist,
-            'atk':self.initAtk,
-            'def':self.initDef,
+            'hp':self.initHP[0],
+            'fed':self.initFed[0],
+            'coldResist':self.initColdResist[0],
+            'atk':self.initAtk[0],
+            'def':self.initDef[0],
             })
         pipeline.hmset(
             'role:equip:%s'%id,{

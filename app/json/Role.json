@@ -4,8 +4,8 @@
     "fed":100,
     "fedMax":200,
     "fedData":{
-        "reduce":3,
-        "sec":10
+        "reduce":1,
+        "sec":8
     },
     "coldResist":0,
     "coldResistMax":200,
@@ -15,5 +15,6 @@
     "defMax":99999,
     "equipSlot":6,
     "weaponSlot":2,
-    "bag":16
+    "bag":16,
+    "gold":10
 }

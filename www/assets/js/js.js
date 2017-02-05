@@ -32,6 +32,13 @@ text[26]="新闻"
 text[27]="用户不存在，请重新登录！"
 text[28]="在别处登录了，请重新登录！"
 text[29]="发生未知错误，请重新登录！"
+text[30]="生命"
+text[31]="饱食"
+text[32]="抗寒"
+text[33]="攻击"
+text[34]="防御"
+text[35]="金币"
+text[36]="重置"
 
 function getString(id) {
     // body...
@@ -229,6 +236,15 @@ var GameMenu = {
         },this.panel)
 
         signoutBtn.css("top","30%")
+
+        var resetBtn = CreateBtn({
+            text:getString(36),
+            click:Engine.sendRest,
+            id:"resetBtn",
+            center:true,
+        },this.panel)
+
+        resetBtn.css("top","45%")
 
         var backBtn = CreateBtn({
             text:getString(1),
@@ -487,25 +503,173 @@ var Equip = {
  * Created by 95 on 2016/3/7.
  */
 
-var Status = {
+var StatusView = {
 
     ui : null,
 
     init : function(options)
     {
-        Status.ui = $('<div>').addClass('statusBar').appendTo("#box");
+        StatusView.ui = $('<div>').addClass('statusBar').appendTo("#box");
     },
 }/**
  * Created by 95 on 2016/3/7.
  */
 
-var Attr = {
+var Role = {
+
+	mapAreaId:0,
+	status:0,
+	gold:0,
+	atFunction:"",
+	mapArea:{
+		x:0,
+		y:0,
+	},
+	block:{
+		x:0,
+		y:0,
+	},
+	attr:{
+		hp:0,
+		fed:0,
+		coldResist:0,
+		atk:0,
+		def:0,
+	},
+
+	mapAreaSet:function(x,y)
+	{
+		Role.mapArea.x = x
+		Role.mapArea.y = y
+	},
+
+	blockSet:function(x,y)
+	{
+		Role.block.x = x
+		Role.block.y = y
+	},
+
+	AttrSet:function(key,value)
+	{
+		Role.attr[key]=value
+		AttrView.AttrSet(key,value)
+	},
+
+	GoldSet:function(value)
+	{
+		Role.gold = value
+		Role.AttrSet("gold",value)
+	},
+
+	AttrGet:function(key)
+	{
+		return Role.attr[key]
+	},
+
+	AttrInit(data)
+	{
+		for (key in data){
+			Role.AttrSet(key,data[key])
+		}
+	}
+} 
+
+var AttrView = {
 
     ui : null,
 
+    hp : {
+    	wrap : null,
+    	value:null,
+    	text:30,
+    	danger:25,
+    },
+
+    fed : {
+    	wrap : null,
+    	value:null,
+    	text:31,
+    	danger:25,
+    },
+
+    coldResist:{
+    	wrap : null,
+    	value:null,   	
+    	text:32,
+    },
+
+    atk:{
+    	wrap : null,
+    	value:null,   
+    	text:33,	
+    },
+
+    def:{
+    	wrap : null,
+    	value:null,  
+    	text:34,	
+    }, 
+    gold:{
+    	wrap : null,
+    	value:null,   
+    	text:35,	
+    },
+
+    initAttrUI:function(attr,left,top)
+    {
+    	AttrView[attr].wrap = $('<div>').addClass('attrwrap').attr("id",attr+"wrap").css("left",left+"px").css("top",top+"px").appendTo(AttrView.ui);
+    	$('<div>').attr("id",attr+"label")
+    	.addClass("attrlabel")
+    	.text(getString(AttrView[attr].text)+" :")
+    	.appendTo(AttrView[attr].wrap);
+    	AttrView[attr].value = $('<div>').attr("id",attr+"value")
+    	.addClass("attrvalue")
+    	.text("0")
+    	.appendTo(AttrView[attr].wrap);
+    },
+
+    initPropUI:function(attr,left,top)
+    {
+    	AttrView[attr].wrap = $('<div>').addClass('propwrap').attr("id",attr+"wrap").css("right",left+"px").css("top",top+"px").appendTo(AttrView.ui);
+    	$('<div>').attr("id",attr+"label")
+    	.addClass("proplabel")
+    	.text(getString(AttrView[attr].text)+" :")
+    	.appendTo(AttrView[attr].wrap);
+    	AttrView[attr].value = $('<div>').attr("id",attr+"value")
+    	.addClass("attrvalue")
+    	.text("0")
+    	.appendTo(AttrView[attr].wrap);
+    },
+
+    AttrSet:function(attr,value)
+    {
+    	AttrView[attr].value.text(value);
+    	if(AttrView[attr].danger!=undefined)
+    	{
+    		if(value<=AttrView[attr].danger)
+    		{
+    			AttrView[attr].value.addClass("danger")
+    		}
+    		else
+    		{
+    			if(AttrView[attr].value.hasClass("danger"))
+    			{
+    				AttrView[attr].value.removeClass("danger")
+    			}
+    		}
+    	}
+    },
+
     init : function(options)
     {
-        Attr.ui = $('<div>').addClass('attrBar').appendTo("#box");
+        AttrView.ui = $('<div>').addClass('attrBar').appendTo("#box");
+        AttrView.initAttrUI("hp",7,7);
+        AttrView.initAttrUI("fed",7,35);
+        AttrView.initAttrUI("coldResist",112,7);
+        AttrView.initAttrUI("atk",112,35);
+        AttrView.initAttrUI("def",217,7);
+        AttrView.initPropUI("gold",5,7);
+        
     },
 }/**
  * Created by 95 on 2016/3/7.
@@ -641,19 +805,27 @@ var Engine =
             //登录成功
             Engine.nickname = data.nickname;
             Engine.user = data.user;
-            //
-            $('<div>').addClass('topBar').appendTo("#box");
-            $('<div>').addClass('bottombar').appendTo("#box");
-            $('<div>').addClass('rlink').appendTo("#box");
-            $('<div>').addClass('gboard').appendTo("#box");
-            $('<div>').addClass('blink').appendTo("#box");
+
+            Engine.initBarUI('topBar')
+            Engine.initBarUI('bottombar')
+            Engine.initBarUI('rlink')
+            Engine.initBarUI('gboard')
+            Engine.initBarUI('blink')
 
             Engine.ModuleInit(data)
             Engine.update()
             CreateRightBtn()
             Engine.onClickBagBtn()
             SwitchCh1()
+            Role.AttrInit(data.attr)
+            Role.GoldSet(data.gold)
+            //Role.AttrSet("hp",5);
         }
+    },
+
+    initBarUI:function(bar)
+    {
+        $('<div>').addClass(bar).appendTo("#box");
     },
 
     ModuleInit :function(data)
@@ -662,13 +834,12 @@ var Engine =
         Chn2.init();
         Env.init();
         Env.setTime(data.year,data.season,data.week,data.day,data.hour)
-        Status.init();
-        Attr.init();
+        StatusView.init();
+        AttrView.init();
         Bag.init();
         Weapon.init();
         Equip.init();
         GameMenu.init()
-        
     },
 
     onClickBagBtn : function()
@@ -718,6 +889,21 @@ var Engine =
         jQuery.postJSON("./",data,Engine.onUpdateBack,Engine.onUpdateError)
     },
 
+    sendRest:function()
+    {
+        var data = 
+        {
+            session:document.session,
+            action:'resetAttr',
+        };
+        jQuery.postJSON("./",data,Engine.onsendRestBack,Engine.onUpdateError)        
+    },
+
+    onsendRestBack:function(data)
+    {
+        Role.AttrInit(data.attr)
+    },
+
     onUpdateBack:function(data)
     {
         var sta = parseInt(data.sta);
@@ -728,9 +914,10 @@ var Engine =
         else
         {
             Env.setTime(data.year,data.season,data.week,data.day,data.hour)
+            Role.AttrInit(data.attr)
             setTimeout(Engine.update,1000);
         }
-    }
+    },
 
 /*
     update : function()

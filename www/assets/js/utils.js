@@ -192,6 +192,15 @@ var GameMenu = {
 
         signoutBtn.css("top","30%")
 
+        var resetBtn = CreateBtn({
+            text:getString(36),
+            click:Engine.sendRest,
+            id:"resetBtn",
+            center:true,
+        },this.panel)
+
+        resetBtn.css("top","45%")
+
         var backBtn = CreateBtn({
             text:getString(1),
             click:GameMenu.hideMenu,
