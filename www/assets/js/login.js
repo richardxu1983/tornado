@@ -96,6 +96,13 @@ jQuery.postJSON = function(url, args, callback,fail) {
     });
 };
 
+function getQueryStr(val)
+{
+    var uri = window.location.search;
+　　var re = new RegExp("" +val+ "=([^&?]*)", "ig");
+　　return ((uri.match(re))?(uri.match(re)[0].substr(val.length+1)):null);
+}
+
 var Login = {
 
     title : null,
@@ -103,6 +110,8 @@ var Login = {
     loginui : null,
 
     ing : false,
+
+    name : null,
 
     createUI : function(parent)
     {
@@ -113,7 +122,7 @@ var Login = {
         var inst_html = "";
         inst_html = "<div class='signTitle'><a id='nav_signup'>注册</a><a id='nav_signin'>登录</a></div>";
         inst_html+="<div id='singnwrapper'><div class='input-wrapper' id='usernamewrapper'>"
-        inst_html+="<input type='text' id='username' class='form-control' placeholder='登录名' required autofocus></div> "
+        inst_html+="<input type='text' id='username' class='form-control' placeholder='登录名'></div> "
         inst_html+="<div class='input-wrapper' id='pwdwrapper'>"
         inst_html+="<input type='password' id='inputPassword' class='form-control' placeholder='密码' required></div>"
         inst_html+="<button class='btn btn-lg btn-primary btn-block' id='signinBtn' >登录</button><div class='errormsg' id='signinerror'></div></div>"
@@ -133,35 +142,47 @@ var Login = {
         $('#nav_signin').click(Login.onClickSigninNav)
         $('#inputPassword').focus(function(){
             Login.delError('#pwdwrapper');
-            $('#inputPassword').val("");
+            //$('#inputPassword').val("");
             Login.clearError("#signinerror")
         })
         $('#username').focus(function(){
             Login.delError('#usernamewrapper');
-            $('#username').val("");
+            //$('#username').val("");
             Login.clearError("#signinerror")
         })
         $('#susername').focus(function(){
             Login.delError('#susernamewrapper');
-            $('#susername').val("");
+            //$('#susername').val("");
             Login.clearError("#signuperror")
         })
         $('#snickname').focus(function(){
             Login.delError('#snicknamewrapper');
-            $('#snickname').val("");
+            //$('#snickname').val("");
             Login.clearError("#signuperror")
         })
         $('#sinputPassword').focus(function(){
             Login.delError('#spwdwrapper');
-            $('#sinputPassword').val("");
+            //$('#sinputPassword').val("");
             Login.clearError("#signuperror")
         })
         $('#repeatPassword').focus(function(){
             Login.delError('#srpwdwrapper');
-            $('#repeatPassword').val("");
+            //$('#repeatPassword').val("");
             Login.clearError("#signuperror")
         })
         Login.onClickSigninNav();
+
+
+        var LocString = getQueryStr("user")
+        if(LocString!=undefined)
+        {
+            $('#username').attr("value",LocString)
+            $('#inputPassword').focus()
+        }
+        else
+        {
+            $('#username').focus()
+        }
     },
 
     onClickSignupNav : function()
@@ -259,7 +280,7 @@ var Login = {
             Notif.print("密码出现undefined错误")
             return;
         }
-        
+        Login.name = uname
         if(bNameValid&&bPwdValid&&bIsSame&&bNickValid)
         {
             Login.ing = true;
@@ -296,7 +317,7 @@ var Login = {
         else
         {
             alert("注册成功，请登录！")
-            window.location.href = "/login";
+            window.location.href = "/login?user="+Login.name;
         }
     },
 

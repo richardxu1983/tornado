@@ -80,9 +80,9 @@ class indexHandler(BasicCtrl):
             "attr":{
                 "hp":attr_hp,
                 "fed":attr_fed,
-                "coldResist":attr_coldResist,
                 "atk":attr_atk,
                 "def":attr_def,
+                "coldResist":attr_coldResist,
             }
             })   # 在别处登录了
             self.finish()
@@ -118,9 +118,9 @@ class indexHandler(BasicCtrl):
             "attr":{
                 "hp":attr_hp,
                 "fed":attr_fed,
-                "coldResist":attr_coldResist,
                 "atk":attr_atk,
                 "def":attr_def,
+                "coldResist":attr_coldResist,
             }
             })
             self.finish()

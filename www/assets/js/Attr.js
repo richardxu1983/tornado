@@ -152,9 +152,9 @@ var AttrView = {
         AttrView.ui = $('<div>').addClass('attrBar').appendTo("#box");
         AttrView.initAttrUI("hp",7,7);
         AttrView.initAttrUI("fed",7,35);
-        AttrView.initAttrUI("coldResist",112,7);
-        AttrView.initAttrUI("atk",112,35);
-        AttrView.initAttrUI("def",217,7);
+        AttrView.initAttrUI("atk",112,7);
+        AttrView.initAttrUI("def",112,35);
+        AttrView.initAttrUI("coldResist",217,7);
         AttrView.initPropUI("gold",5,7);
         
     },

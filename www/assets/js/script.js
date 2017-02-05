@@ -145,6 +145,12 @@ var Engine =
         jQuery.postJSON("./",data,Engine.onsendRestBack,Engine.onUpdateError)        
     },
 
+    onUpdateError:function()
+    {
+        alert(getString(29))
+        window.location.href = "/login";
+    },
+
     onsendRestBack:function(data)
     {
         Role.AttrInit(data.attr)

@@ -66,7 +66,21 @@ class gamerole():
             conn.hmset('role:attr:%s'%id,{'fed':fed})
     
     def roleSetFedTime(self,id):
-        conn.set('role:fed_tick:%s'%id,datetime.datetime.now())
+        tick = conn.get('role:fed_tick:%s'%id)
+        tick = datetime.datetime.strptime(tick,'%Y-%m-%d %H:%M:%S.%f')
+        tick_now = datetime.datetime.now()
+        sec = (tick_now - tick).seconds
+        sec_single=self.fedData[0]["sec"]
+        if sec>=sec_single*1 and sec<sec_single*2:
+            fed=conn.hmget('role:attr:%s'%id,'fed')
+            fed=int(fed[0])
+            fed-=1
+            if fed<=0:
+                fed=0
+            conn.hmset('role:attr:%s'%id,{'fed':fed})
+            conn.set('role:fed_tick:%s'%id,tick_now)
+        if sec>=sec_single*2:
+            conn.set('role:fed_tick:%s'%id,datetime.datetime.now())
 
     def resetAttr(self,id):
         conn.hmset(
