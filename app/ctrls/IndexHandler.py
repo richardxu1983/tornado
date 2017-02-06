@@ -103,7 +103,7 @@ class indexHandler(BasicCtrl):
             "attr":{
                 "fed":fed,
             }
-            })   # 在别处登录了
+            })
             self.finish()
         if action == 'resetAttr':
             ROLE.resetAttr(id)
