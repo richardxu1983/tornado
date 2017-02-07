@@ -13,6 +13,8 @@
     "atkMax":99999,
     "defence":0,
     "defMax":99999,
+    "sta":100,
+    "staMax":200,
     "equipSlot":6,
     "weaponSlot":2,
     "bag":16,

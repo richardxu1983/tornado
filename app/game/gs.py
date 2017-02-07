@@ -4,6 +4,7 @@ import tornado
 
 from gday import GDay
 from role import ROLE
+import place
 
 class gameServer():
 
@@ -22,6 +23,7 @@ class gameServer():
         print(result)
 
     def start(self):
+        place.MAP.load()
         GDay.init()
         ROLE.init()
         self.readDB()

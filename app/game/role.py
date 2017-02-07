@@ -11,15 +11,15 @@ import datetime
 class gamerole():
     def __init__(self):
         self._jsonData = None
-        self.initGold=0,
-        self.initHP = 0,
-        self.initFed = 0,
-        self.initFed = 0,
-        self.initColdResist=0,
-        self.initAtk=0,
-        self.initDef=0,
-        self.equipSlot=0,
-        self.weaponSlot=0,
+        self.initGold=0
+        self.initHP = 0
+        self.initFed = 0
+        self.initFed = 0
+        self.initColdResist=0
+        self.initAtk=0
+        self.initDef=0
+        self.equipSlot=0
+        self.weaponSlot=0
         pass
 
     def init(self):
@@ -85,11 +85,11 @@ class gamerole():
     def resetAttr(self,id):
         conn.hmset(
             'role:attr:%s'%id,{
-            'hp':self.initHP[0],
-            'fed':self.initFed[0],
-            'coldResist':self.initColdResist[0],
-            'atk':self.initAtk[0],
-            'def':self.initDef[0],
+            'hp':self.initHP,
+            'fed':self.initFed,
+            'coldResist':self.initColdResist,
+            'atk':self.initAtk,
+            'def':self.initDef,
             })
         
 
@@ -101,7 +101,7 @@ class gamerole():
         pipeline.hmset(
             'role:basic:%s'%id,{
             'nickname':nickname,
-            'gold':self.initGold[0],
+            'gold':self.initGold,
             'createTime':t,
             })
         pipeline.hmset(
@@ -119,11 +119,11 @@ class gamerole():
         #print("set!!!self.initHP=%s,type=%s,self.initHP[0]=%s"%(self.initHP,type(self.initHP),self.initHP[0]))
         pipeline.hmset(
             'role:attr:%s'%id,{
-            'hp':self.initHP[0],
-            'fed':self.initFed[0],
-            'coldResist':self.initColdResist[0],
-            'atk':self.initAtk[0],
-            'def':self.initDef[0],
+            'hp':self.initHP,
+            'fed':self.initFed,
+            'coldResist':self.initColdResist,
+            'atk':self.initAtk,
+            'def':self.initDef,
             })
         pipeline.hmset(
             'role:equip:%s'%id,{
