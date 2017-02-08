@@ -2,6 +2,7 @@
 import tools
 from  tools.dbase import conn;
 from tools.dbase import acquire_lock_with_timeout
+import place
 import json
 import os
 import time
@@ -104,12 +105,12 @@ class gamerole():
             'gold':self.initGold,
             'createTime':t,
             })
+        x,y,placeid = place.MAP.findAPlace()
         pipeline.hmset(
             'role:pos:%s'%id,{
-            'mapArea:x':1,
-            'mapArea:y':1,
-            'block:x':1,
-            'block:y':1,
+            'place:x':x,
+            'place:y':y,
+            'placeId':placeid,
             })
         pipeline.hmset(
             'role:status:%s'%id,{
