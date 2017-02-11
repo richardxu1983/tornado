@@ -12,8 +12,12 @@ print(_placeJsonData)
 print("\n=====================================\n")
 print(_placeJsonData[1])
 print("\n=====================================\n")
-print(_placeJsonData[1]["type"])
+print(type(_placeJsonData[1]["data"]["function"]))
+print(type(_placeJsonData[1]["data"]["function"]))
+for v in _placeJsonData[1]["data"]["function"]:
+    print v["type"]
 '''
+
 
 AreaW = 9
 AreaH = 9
@@ -79,12 +83,59 @@ class map(object):
         return True
 
     def setHomeForPlayer(self,uid,x,y):
-        conn.hmset(
-            'place:%s:%s'%(x,y),{
+
+        slotNum = _placeJsonData[0]["data"]["FacilitySlot"]
+        placeid='place:%s:%s'%(x,y)
+        slotIndex = 0
+        funNum=0
+        pipeline = conn.pipeline(True)
+        pipeline.hmset(
+            placeid,{
             'belong':BELONG_PLAYER,
             'belongTo':uid,
             'type':0,
+            'slotNum':slotNum,
+            'slotIndex':slotIndex,
+            'funNum':funNum,
             })
+
+        #slot
+        if slotNum>0:
+            for i in range(1,slotNum+1):
+                pipeline.hmset(placeid,{'slot:%s'%i:0,})
+
+        #Facilities
+        for v in _placeJsonData[0]["data"]["initFacilities"]:
+            slotIndex+=1
+            pipeline.hmset(placeid,{
+                'slot:%s:type'%slotIndex:v["type"],
+                'slot:%s:id'%slotIndex:v["id"],
+                'slotIndex':slotIndex,
+                })
+
+        #function
+        for v in _placeJsonData[0]["data"]["function"]:
+            funNum+=1
+            pipeline.hmset(placeid,{'funNum':funNum,
+                'fun:%s:type'%funNum:v["type"],
+                })
+            if v["id"]!=None:
+                pipeline.hmset(placeid,{
+                'fun:%s:id'%funNum:v["id"],
+                })
+            if v["type"]=="store":
+                id=v["id"]
+                room = _store[id]["room"]
+                pipeline.hmset(
+                'store:%s:%s'%(x,y),{
+                'room':room,
+                })
+                for i in range(1,room+1):
+                    pipeline.hmset(
+                    'store:%s:%s'%(x,y),{
+                    'room:%s'%i:0,
+                    })
+        pipeline.execute()
         pass
 
     def findHome(self,uid):
@@ -176,11 +227,15 @@ class place():
 
     def initToDB(self,randomP=1):
         if randomP==1:
+
+            pipeline = conn.pipeline(True)
             r = random.randint(1, 1)
             self.type = r
+            funNum=0
+            placeid='place:%s:%s'%(self.x,self.y)
 
-            conn.hmset(
-            'place:%s:%s'%(self.x,self.y),{
+            pipeline.hmset(
+            placeid,{
             'type':self.type,
             'pos':"%s,%s"%(self.x,self.y),
             'areaX':self.areaX,
@@ -189,6 +244,28 @@ class place():
             'belong':BELONG_NONE,
             'belongTo':0,
             })
-
+            for v in _placeJsonData[self.type]["data"]["function"]:
+                funNum+=1
+                pipeline.hmset(placeid,{
+                    'funNum':funNum,
+                    'fun:%s:type'%funNum:v["type"],
+                    })
+                if v["id"]!=None:
+                    pipeline.hmset(placeid,{
+                    'fun:%s:id'%funNum:v["id"],
+                    })
+                if v["type"]=="store":
+                    id=v["id"]
+                    room = _store[id]["room"]
+                    pipeline.hmset(
+                    'store:%s:%s'%(x,y),{
+                    'room':room,
+                    })
+                    for i in range(1,room+1):
+                        pipeline.hmset(
+                        'store:%s:%s'%(x,y),{
+                        'room:%s'%i:0,
+                        })           
+            pipeline.execute()
         #random.randint(2, 2)
         pass
