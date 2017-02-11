@@ -2,6 +2,52 @@
  * Created by 95 on 2016/3/7.
  */
 
+var Place = {
+
+    x : null,
+    y : null,
+    belong : null,
+    belongTo : null,
+    self : 0,
+    type:-1,
+    pos_ui:null,
+
+    init : function()
+    {
+        Place.pos_ui = $('<div>').addClass('wrd').text("").css("right","18px").appendTo(".topBar");
+    },
+
+    setPos:function(data)
+    {
+        Place.x = parseInt(data.x)
+        Place.y = parseInt(data.y)
+        Place.belong = parseInt(data.belong)
+        Place.belongTo = data.belongTo
+        Place.self = parseInt(data.self)
+        Place.type = parseInt(data.type)
+        Place.refreshTopTxt()
+    },
+    
+    refreshTopTxt:function()
+    {
+        var txt="[ "+Place.x+","+Place.y+" ]"
+        txt+=" - "
+        if(Place.belong!=0)
+        {
+            if(Place.self==1)
+            {
+                txt+=getString(37)
+            }
+            else
+            {
+                txt+=Place.belongTo
+            }
+        }
+        txt+=placeGetTitle(Place.type)
+        Place.pos_ui.text(txt)
+    },
+}
+
 var Env = {
 
     time_ui : null,
@@ -20,7 +66,6 @@ var Env = {
     init : function(options)
     {
         Env.time_ui = $('<div>').addClass('wrd').css("left","8px").appendTo(".topBar");
-        Env.pos_ui = $('<div>').addClass('wrd').text(Env.pos_txt).css("right","18px").appendTo(".topBar");
         Env.time_ui.text(Env.time_txt);
     },
 
@@ -73,10 +118,5 @@ var Env = {
     {
         Env.time_txt = Env.year+getString(3)+Env.season_txt+" , "+Env.week+getString(9)+getString(18)+Env.day+getString(10)+ " , "+Env.hour+"h : "+Env.day_txt
         Env.time_ui.text(Env.time_txt);
-    },
-
-    setPosTxt : function(str)
-    {
-        Env.pos_ui.text(str);
     },
 }

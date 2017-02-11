@@ -39,10 +39,22 @@ text[33]="攻击"
 text[34]="防御"
 text[35]="金币"
 text[36]="重置"
+text[37]="自己的"
+text[38]="家"
+text[39]="森林"
+
+var placeType=new Array();
+placeType[0]=38
+placeType[1]=39
 
 function getString(id) {
     // body...
     return text[id];
+}
+
+function placeGetTitle(type)
+{
+	return getString(placeType[type])
 }/**
  * Created by 95 on 2016/3/7.
  */
@@ -413,7 +425,14 @@ jQuery.postJSON = function(url, args, callback,fail) {
         },
         error : function(){fail();}
     });
-};/**
+};
+
+function getQueryStr(val)
+{
+    var uri = window.location.search;
+　　var re = new RegExp("" +val+ "=([^&?]*)", "ig");
+　　return ((uri.match(re))?(uri.match(re)[0].substr(val.length+1)):null);
+}/**
  * Created by 95 on 2016/3/7.
  */
 
@@ -675,6 +694,52 @@ var AttrView = {
  * Created by 95 on 2016/3/7.
  */
 
+var Place = {
+
+    x : null,
+    y : null,
+    belong : null,
+    belongTo : null,
+    self : 0,
+    type:-1,
+    pos_ui:null,
+
+    init : function()
+    {
+        Place.pos_ui = $('<div>').addClass('wrd').text("").css("right","18px").appendTo(".topBar");
+    },
+
+    setPos:function(data)
+    {
+        Place.x = parseInt(data.x)
+        Place.y = parseInt(data.y)
+        Place.belong = parseInt(data.belong)
+        Place.belongTo = data.belongTo
+        Place.self = parseInt(data.self)
+        Place.type = parseInt(data.type)
+        Place.refreshTopTxt()
+    },
+    
+    refreshTopTxt:function()
+    {
+        var txt="[ "+Place.x+","+Place.y+" ]"
+        txt+=" - "
+        if(Place.belong!=0)
+        {
+            if(Place.self==1)
+            {
+                txt+=getString(37)
+            }
+            else
+            {
+                txt+=Place.belongTo
+            }
+        }
+        txt+=placeGetTitle(Place.type)
+        Place.pos_ui.text(txt)
+    },
+}
+
 var Env = {
 
     time_ui : null,
@@ -693,7 +758,6 @@ var Env = {
     init : function(options)
     {
         Env.time_ui = $('<div>').addClass('wrd').css("left","8px").appendTo(".topBar");
-        Env.pos_ui = $('<div>').addClass('wrd').text(Env.pos_txt).css("right","18px").appendTo(".topBar");
         Env.time_ui.text(Env.time_txt);
     },
 
@@ -747,10 +811,45 @@ var Env = {
         Env.time_txt = Env.year+getString(3)+Env.season_txt+" , "+Env.week+getString(9)+getString(18)+Env.day+getString(10)+ " , "+Env.hour+"h : "+Env.day_txt
         Env.time_ui.text(Env.time_txt);
     },
+}/**
+ * Created by 95 on 2016/3/7.
+ */
 
-    setPosTxt : function(str)
+var GB = {
+
+    title_ui : null,
+    fun_ui : null,
+    op_ui : null,
+
+    init:function()
     {
-        Env.pos_ui.text(str);
+        GB.title_ui = $('<div>').addClass('gtitle').appendTo(".gboard");
+        GB.fun_ui = $('<div>').addClass('gfun').appendTo(".gboard");
+        GB.op_ui = $('<div>').addClass('gop').appendTo(".gboard");
+    },
+
+    refreshUI:function()
+    {
+        GB.refreshTitle()
+    },
+
+    refreshTitle:function()
+    {
+        txt=""
+        if(Place.belong!=0)
+        {
+            if(Place.self==1)
+            {
+                txt+=getString(37)
+            }
+            else
+            {
+                txt+=Place.belongTo
+            }
+        }
+
+        txt+=placeGetTitle(Place.type)
+        GB.title_ui.text(txt)
     },
 }/**
  * Created by 95 on 2016/3/7.
@@ -819,7 +918,8 @@ var Engine =
             SwitchCh1()
             Role.AttrInit(data.attr)
             Role.GoldSet(data.gold)
-            //Role.AttrSet("hp",5);
+            Place.setPos(data.pos)
+            GB.refreshUI()
         }
     },
 
@@ -834,12 +934,14 @@ var Engine =
         Chn2.init();
         Env.init();
         Env.setTime(data.year,data.season,data.week,data.day,data.hour)
+        Place.init()
         StatusView.init();
         AttrView.init();
         Bag.init();
         Weapon.init();
         Equip.init();
         GameMenu.init()
+        GB.init()
     },
 
     onClickBagBtn : function()

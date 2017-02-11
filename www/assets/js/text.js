@@ -39,8 +39,20 @@ text[33]="攻击"
 text[34]="防御"
 text[35]="金币"
 text[36]="重置"
+text[37]="自己的"
+text[38]="家"
+text[39]="森林"
+
+var placeType=new Array();
+placeType[0]=38
+placeType[1]=39
 
 function getString(id) {
     // body...
     return text[id];
+}
+
+function placeGetTitle(type)
+{
+	return getString(placeType[type])
 }

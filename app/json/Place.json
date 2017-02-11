@@ -39,14 +39,15 @@
             "function": 
             [
                 {
-                    "type":"view"
+                    "type":"gather",
+                    "resource":["1","2"]
                 },
                 {
-                    "type":"gather",
+                    "type":"hunt",
                     "id":"1"
                 },
                 {
-                    "type":"explore",
+                    "type":"buy",
                     "id":"1"
                 }
             ],
@@ -62,17 +63,6 @@
                 {
                     "type":"gather",
                     "id":"1"
-                }
-            ],
-            "resource":
-            [
-                {
-                    "type":"tree01",
-                    "amount":500,
-                    "reg":{
-                        "timeType":"day",
-                        "amount":10
-                    }
                 }
             ]
         }

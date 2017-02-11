@@ -1,0 +1,17 @@
+{
+    "1": {
+        "type": "slotAdd",
+        "Multi": true,
+        "MaxTime": 3,
+        "data": [
+            "4",
+            "4",
+            "4"
+        ],
+        "cost": {
+            "wood": "120",
+            "stone": "64",
+            "Multi": "1.5"
+        }
+    }
+}

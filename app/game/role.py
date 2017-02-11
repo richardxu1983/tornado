@@ -26,15 +26,15 @@ class gamerole():
     def init(self):
         json_file=open('json/Role.json')
         self._jsonData = json.load(json_file)
-        self.initHP = self._jsonData["HP"],
-        self.initFed = self._jsonData["fed"],
-        self.initColdResist=self._jsonData["coldResist"],
-        self.initAtk=self._jsonData["atk"],
-        self.initDef=self._jsonData["defence"],
-        self.equipSlot=self._jsonData["equipSlot"],
-        self.weaponSlot=self._jsonData["weaponSlot"],
-        self.initGold=self._jsonData["gold"],
-        self.fedData = self._jsonData["fedData"],
+        self.initHP = self._jsonData["HP"]
+        self.initFed = self._jsonData["fed"]
+        self.initColdResist=self._jsonData["coldResist"]
+        self.initAtk=self._jsonData["atk"]
+        self.initDef=self._jsonData["defence"]
+        self.equipSlot=self._jsonData["equipSlot"]
+        self.weaponSlot=self._jsonData["weaponSlot"]
+        self.initGold=self._jsonData["gold"]
+        self.fedData = self._jsonData["fedData"]
 
     def roleAttrGet(self,id,key):
         attr = conn.hmget('role:attr:%s'%id,key)
@@ -52,10 +52,11 @@ class gamerole():
 
     def roleFedUpdate(self,id):
         tick = conn.get('role:fed_tick:%s'%id)
-        tick = datetime.datetime.strptime(tick,'%Y-%m-%d %H:%M:%S.%f')
+        tick = datetime.datetime.strptime(tick,'%Y-%m-%d %H:%M:%S')
         tick_now = datetime.datetime.now()
         sec = (tick_now - tick).seconds
-        sec_single=self.fedData[0]["sec"]
+        tick_now = tick_now.strftime("%Y-%m-%d %H:%M:%S")
+        sec_single=self.fedData["sec"]
         if sec>=sec_single:
             conn.set('role:fed_tick:%s'%id,tick_now)
             fed_toreduce=sec/sec_single
@@ -68,10 +69,11 @@ class gamerole():
     
     def roleSetFedTime(self,id):
         tick = conn.get('role:fed_tick:%s'%id)
-        tick = datetime.datetime.strptime(tick,'%Y-%m-%d %H:%M:%S.%f')
+        tick = datetime.datetime.strptime(tick,'%Y-%m-%d %H:%M:%S')
         tick_now = datetime.datetime.now()
         sec = (tick_now - tick).seconds
-        sec_single=self.fedData[0]["sec"]
+        tick_now = tick_now.strftime("%Y-%m-%d %H:%M:%S")
+        sec_single=self.fedData["sec"]
         if sec>=sec_single*1 and sec<sec_single*2:
             fed=conn.hmget('role:attr:%s'%id,'fed')
             fed=int(fed[0])
@@ -81,7 +83,7 @@ class gamerole():
             conn.hmset('role:attr:%s'%id,{'fed':fed})
             conn.set('role:fed_tick:%s'%id,tick_now)
         if sec>=sec_single*2:
-            conn.set('role:fed_tick:%s'%id,datetime.datetime.now())
+            conn.set('role:fed_tick:%s'%id,tick_now)
 
     def resetAttr(self,id):
         conn.hmset(
@@ -98,19 +100,19 @@ class gamerole():
         t = time.time()
         lock = acquire_lock_with_timeout(conn, 'nickname:'+nickname,1)
         pipeline = conn.pipeline(True)
-        conn.set('role:fed_tick:%s'%id,datetime.datetime.now())
+        conn.set('role:fed_tick:%s'%id,datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         pipeline.hmset(
             'role:basic:%s'%id,{
             'nickname':nickname,
             'gold':self.initGold,
             'createTime':t,
             })
-        x,y,placeid = place.MAP.findAPlace()
+        x,y = place.MAP.findHome(id)
+        print("x=%s,y=%s"%(x,y))
         pipeline.hmset(
             'role:pos:%s'%id,{
-            'place:x':x,
-            'place:y':y,
-            'placeId':placeid,
+            'x':x,
+            'y':y,
             })
         pipeline.hmset(
             'role:status:%s'%id,{

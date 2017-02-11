@@ -9,6 +9,8 @@
   --tinygreen:#f3f8f2;
   --leftwidth:728px;
   --dangercolor:#c33;
+  --verydark:#233333;
+  --fontcolor:#666;
 }
 
 @media all, screen and (orientation : landscape)
@@ -16,7 +18,7 @@
     body 
     {
         font-family: Arial,sans-serif;
-        background-color: #233333;
+        background-color: var(--verydark);
         -moz-user-select: none;
         -webkit-user-select: none;
         -ms-user-select: none;
@@ -67,6 +69,10 @@
         padding: 0;
         border-radius: 1px;
         position: relative;
+    }
+    .container-fluid,#background
+    {
+        border-radius:15px;
     }
 
     .devInfo
@@ -153,7 +159,7 @@
     {
         width:85%;
         height:68px; 
-        background-color: var(--lightgreen);
+        background-color: var(--tinygreen);
         margin: 0 auto;
     }
 
@@ -220,7 +226,9 @@
     .gboard
     {
         top: 58px;
-        height:522px;       
+        height:522px;
+        padding: 0;
+        color: var(--fontcolor);
     }
 
     .attrBar
@@ -514,6 +522,30 @@
     {
         margin-left: 5px;
         text-align: left;
+    }
+
+    .gtitle,.gfun,.gop
+    {
+        width: 100%;
+    }
+    .gtitle
+    {
+        height: 80px;
+        font-size: 16px;
+        padding-top: 28px;
+        padding-left: 18px
+    }
+    .gfun
+    {
+        height: 80px;
+    }
+    .gop
+    {
+        height: 362px;
+    }
+    .gtitle,.gfun
+    {
+        border-bottom: solid 1px var(--linecolor);
     }
 }
 

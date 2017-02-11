@@ -65,7 +65,8 @@ var Engine =
             SwitchCh1()
             Role.AttrInit(data.attr)
             Role.GoldSet(data.gold)
-            //Role.AttrSet("hp",5);
+            Place.setPos(data.pos)
+            GB.refreshUI()
         }
     },
 
@@ -80,12 +81,14 @@ var Engine =
         Chn2.init();
         Env.init();
         Env.setTime(data.year,data.season,data.week,data.day,data.hour)
+        Place.init()
         StatusView.init();
         AttrView.init();
         Bag.init();
         Weapon.init();
         Equip.init();
         GameMenu.init()
+        GB.init()
     },
 
     onClickBagBtn : function()

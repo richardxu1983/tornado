@@ -1,0 +1,15 @@
+{
+    "1": {
+        "room": "20",
+        "upgrade": true,
+        "upgradeTo": "2",
+        "cost": {
+            "wood": "120",
+            "stone": "64"
+        }
+    },
+    "2": {
+        "room": "28",
+        "upgrade": false
+    }
+}

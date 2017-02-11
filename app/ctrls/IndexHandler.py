@@ -9,6 +9,7 @@ from game.gs import GS;
 from game.gday import GDay
 from game.role import ROLE
 from  tools.dbase import conn;
+import game.place
 import time;
 
 class indexHandler(BasicCtrl):
@@ -66,6 +67,21 @@ class indexHandler(BasicCtrl):
             prop_gold=conn.hmget('role:basic:%s'%id,'gold')
             prop_gold=prop_gold[0]
 
+            pos_str = conn.hmget('role:pos:%s'%id,'x','y')
+            pos_x=pos_str[0]
+            pos_y=pos_str[1]
+            pos_str = conn.hmget('place:%s:%s'%(pos_x,pos_y),'belong','belongTo','type')
+            pos_belong = int(pos_str[0])
+            pos_belongTo=pos_str[1]
+            pos_type=pos_str[2]
+            pos_user=""
+            pos_self=0
+
+            if pos_belong==game.place.BELONG_PLAYER:
+                pos_user = conn.hmget('user:%s'%pos_belongTo,'username')[0]
+                if pos_belongTo==id:
+                    pos_self=1
+
             #print(time.asctime( time.localtime(float(conn.hmget('user:%s'%id,'signin')[0]))))
             self.write({
             "sta": 0,
@@ -83,6 +99,14 @@ class indexHandler(BasicCtrl):
                 "atk":attr_atk,
                 "def":attr_def,
                 "coldResist":attr_coldResist,
+            },
+            "pos":{
+            "x":pos_x,
+            "y":pos_y,
+            "belong":pos_belong,
+            "belongTo":pos_user,
+            "type":pos_type,
+            "self":pos_self,
             }
             })   # 在别处登录了
             self.finish()

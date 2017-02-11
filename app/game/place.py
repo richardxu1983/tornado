@@ -7,15 +7,22 @@ import random
 _placeJsonFile = open('json/Place.json')
 _placeJsonData = json.load(_placeJsonFile)
 
+'''
 print(_placeJsonData)
 print("\n=====================================\n")
 print(_placeJsonData[1])
 print("\n=====================================\n")
 print(_placeJsonData[1]["type"])
+'''
 
 AreaW = 9
 AreaH = 9
 PlayerGap=2
+RandomGap=PlayerGap*2+1
+
+BELONG_NONE = 0
+BELONG_NPC = 1
+BELONG_PLAYER = 999
 
 class map(object):
 
@@ -30,38 +37,121 @@ class map(object):
 
     def load(self):
         print("start loading map...")
+        #获取搜索阶段
+        phase = conn.get('map:searchPhase')
+        if not phase:
+            conn.set('map:searchPhase',1)
+
+        #获取搜索半径
+        seg = conn.get('map:searchSeg')
+        if not seg:
+            conn.set('map:searchSeg',1)
+
+        #获取搜索位置
+        index = conn.get('map:searchIndex')
+        if not seg:
+            conn.set('map:searchIndex',0)
+
         for i in range(0, self.wNum):
             for j in range(0, self.hNum):
                 AreaX=i/AreaW
                 AreaY=j/AreaH
                 AreaId="%s:%s"%(AreaX,AreaY)
-                placeId=i*self.h*AreaH+j
                 #print("i=%s,j=%s,id=%s,type=%s"%(i,j,id,type(id)))
-                self.place[i][j] = place(placeId,i,j,AreaId,AreaX,AreaY)
-                #self.place[i][j].load()
+                self.place[i][j] = place(i,j,AreaId,AreaX,AreaY)
+                self.place[i][j].load()
                 #print(self.mapArea[i][j].id)
         print("map loaded")
+
+    #检测是否可以放置玩家
+    def canPutPlayer(self,x,y):
+
+        belong = 0
+        for i in range(x-PlayerGap, x+PlayerGap+1):
+            for j in range(y-PlayerGap, y+PlayerGap+1):
+                if i<=0 or j<=0 or i>=self.wNum-1 or j>=self.hNum-1:
+                    return False
+                print("x:%s,y:%s,i:%s,j:%s,belong=%s"%(x,y,i,j,belong))
+                belong = int(conn.hmget('place:%s:%s'%(i,j),'belong')[0])
+                
+                if belong!= BELONG_NONE:
+                    return False
+        return True
+
+    def setHomeForPlayer(self,uid,x,y):
+        conn.hmset(
+            'place:%s:%s'%(x,y),{
+            'belong':BELONG_PLAYER,
+            'belongTo':uid,
+            'type':0,
+            })
         pass
 
-    def findAPlaceFor(self,uid,radius=3):
-        x = 300+radius+PlayerGap
-        y = 300
-        id=self.place[x][y].id
-        conn.hmset(
-            'place:%s'%id,{
-            'type':0,
-            'belong':999,
-            'belongTo':uid,
-            })
-        return x,y,id
+    def findHome(self,uid):
+        return self.findAPlaceFor(uid,300,300,3)
+
+    def findAPlaceFor(self,uid,x,y,radius):
+
+        phase = int(conn.get('map:searchPhase'))
+        seg = int(conn.get('map:searchSeg'))
+        index = int(conn.get('map:searchIndex'))
+
+        print("findAPlaceFor uid=%s,x=%s,y=%s"%(uid,x,y))
+
+        while True:
+            print("phase=%s"%(phase))
+            if phase==1:
+                for i in range(x-RandomGap*seg+index,x+radius+RandomGap*(seg-1)+1):
+                    py=random.randint(y+1+RandomGap*(seg-1), y+RandomGap*seg)
+                    print("i=%s,py=%s"%(i,py))
+                    if self.canPutPlayer(i,py):
+                        self.setHomeForPlayer(uid,i,py)
+                        conn.set('map:searchIndex',i)
+                        return i,py
+                phase+=1
+                conn.set('map:searchPhase',phase)  
+            
+            if phase==2:
+                for py in range(y-radius+RandomGap*(seg-1)+index,y+RandomGap*seg):
+                    px=random.randint(x+radius+1+RandomGap*(seg-1),x+radius+RandomGap*seg)
+                    if self.canPutPlayer(px,py):
+                        self.setHomeForPlayer(uid,px,py)
+                        conn.set('map:searchIndex',py)
+                        return px,py
+                phase+=1
+                conn.set('map:searchPhase',phase)  
+
+            if phase==3:
+                for px in range(x-RandomGap*(seg-1)+index,x+radius+RandomGap*seg):
+                    py=random.randint(y-radius-1-RandomGap*(seg-1),y-radius-RandomGap*seg)
+                    if self.canPutPlayer(px,py):
+                        self.setHomeForPlayer(uid,px,py)
+                        conn.set('map:searchIndex',px)
+                        return px,py
+                phase+=1
+                conn.set('map:searchPhase',phase)  
+
+
+            if phase==4:
+                for py in range(y-radius-RandomGap*seg+index,y+RandomGap*(seg-1)):
+                    px=random.randint(x-RandomGap*seg,x-1-RandomGap*(seg-1))
+                    if self.canPutPlayer(px,py):
+                        self.setHomeForPlayer(uid,px,py)
+                        conn.set('map:searchIndex',py)
+                        return px,py
+                phase=1
+                conn.set('map:searchPhase',phase)
+                seg+=1
+                conn.set('map:searchSeg',seg)
+
+        return 0,0
 
 MAP = map()
 
 class place():
 
-    def __init__(self,id,x,y,AreaId,AreaX,AreaY):
+    def __init__(self,x,y,AreaId,AreaX,AreaY):
         self.facilitySlotNum=0,
-        self.id=id
         self.x=x
         self.y=y
         self.areaId=AreaId
@@ -75,7 +165,7 @@ class place():
         pass
 
     def load(self):
-        self.type = conn.hmget('place:%s'%self.id,"type")[0]
+        self.type = conn.hmget('place:%s:%s'%(self.x,self.y),"type")[0]
         if not self.type:
             self.initToDB(1)
         #print("load place:%s"%self.id)
@@ -88,20 +178,17 @@ class place():
         if randomP==1:
             r = random.randint(1, 1)
             self.type = r
-            lock = acquire_lock_with_timeout(conn, 'place:'+self.id,1)
-            pipeline = conn.pipeline(True)
 
-            pipeline.hmset(
-            'place:%s'%self.id,{
+            conn.hmset(
+            'place:%s:%s'%(self.x,self.y),{
             'type':self.type,
             'pos':"%s,%s"%(self.x,self.y),
             'areaX':self.areaX,
             'areaY':self.areaY,
             'areaId':self.areaId,
-            'belong':0,
+            'belong':BELONG_NONE,
+            'belongTo':0,
             })
 
-            pipeline.execute()
-            tools.dbase.release_lock(conn,'place:'+self.id, lock)
         #random.randint(2, 2)
         pass

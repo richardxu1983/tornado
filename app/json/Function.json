@@ -46,5 +46,45 @@
             "room": "28",
             "upgrade": false
         }
+    },
+    "gather": {
+        "1": {
+            "name": "woods",
+            "reource": [
+                {
+                    "type": "wood",
+                    "chance": 100,
+                    "amount": 600,
+                    "get_min": 8,
+                    "get_max": 11
+                },
+                {
+                    "type": "flower",
+                    "chance": 10,
+                    "amount": 30,
+                    "get_min": 1,
+                    "get_max": 1
+                }
+            ]
+        },
+        "2": {
+            "name": "stream",
+            "reource": [
+                {
+                    "type": "water",
+                    "chance": 100,
+                    "amount": 600,
+                    "get_min": 3,
+                    "get_max": 5
+                },
+                {
+                    "type": "fish",
+                    "chance": 5,
+                    "amount": 30,
+                    "get_min": 1,
+                    "get_max": 1
+                }
+            ]
+        }
     }
 }
