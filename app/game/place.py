@@ -3,6 +3,7 @@ import tools
 from  tools.dbase import conn;
 import json
 import random
+import jsonData
 
 _placeJsonFile = open('json/Place.json')
 _placeJsonData = json.load(_placeJsonFile)
@@ -84,7 +85,7 @@ class map(object):
 
     def setHomeForPlayer(self,uid,x,y):
 
-        slotNum = _placeJsonData[0]["data"]["FacilitySlot"]
+        slotNum = int(_placeJsonData[0]["data"]["FacilitySlot"])
         placeid='place:%s:%s'%(x,y)
         slotIndex = 0
         funNum=0
@@ -119,13 +120,14 @@ class map(object):
             pipeline.hmset(placeid,{'funNum':funNum,
                 'fun:%s:type'%funNum:v["type"],
                 })
-            if v["id"]!=None:
+            if v.has_key("id"):
                 pipeline.hmset(placeid,{
                 'fun:%s:id'%funNum:v["id"],
                 })
             if v["type"]=="store":
                 id=v["id"]
-                room = _store[id]["room"]
+                room = int(jsonData._store[id]["room"])
+                print("room:%s"%room)
                 pipeline.hmset(
                 'store:%s:%s'%(x,y),{
                 'room':room,
@@ -250,13 +252,14 @@ class place():
                     'funNum':funNum,
                     'fun:%s:type'%funNum:v["type"],
                     })
-                if v["id"]!=None:
+                if v.has_key("id"):
                     pipeline.hmset(placeid,{
-                    'fun:%s:id'%funNum:v["id"],
-                    })
+                        'fun:%s:id'%funNum:v["id"],
+                        })
                 if v["type"]=="store":
                     id=v["id"]
-                    room = _store[id]["room"]
+                    room = int(jsonData._store[id]["room"])
+                    print("room:%s"%room)
                     pipeline.hmset(
                     'store:%s:%s'%(x,y),{
                     'room':room,
