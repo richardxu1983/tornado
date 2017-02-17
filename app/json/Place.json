@@ -1,13 +1,15 @@
 [
     {
+        "id":0,
         "type":"home",
         "data":
         {
             "FacilitySlot":"12",
-            "function": 
+            "function":
             [
                 {
-                    "type":"view"
+                    "type":"view",
+                    "id":"1"
                 },
                 {
                     "type":"build",
@@ -22,7 +24,7 @@
                     "id":"1"
                 }
             ],
-            "initFacilities": 
+            "initFacilities":
             [
                 {
                     "type":"bed",
@@ -32,37 +34,55 @@
         }
     },
     {
-        "type":"forest1",
+        "id":1,
+        "type":"forest",
         "data":
         {
-            "FacilitySlot":"0",
-            "function": 
+            "function":
             [
                 {
                     "type":"gather",
                     "resource":["1","2"]
                 },
                 {
-                    "type":"hunt",
-                    "id":"1"
+                    "type":"hunt"
                 },
                 {
-                    "type":"buy",
-                    "id":"1"
+                    "type":"buy"
                 }
-            ],
-            "function_buy": 
+            ]
+        }
+    },
+    {
+        "id":2,
+        "type":"stonePit",
+        "data":
+        {
+            "function":
             [
                 {
-                    "type":"view"
+                    "type":"gather",
+                    "resource":["3","4"]
                 },
                 {
-                    "type":"build",
-                    "id":"2"
-                },
+                    "type":"dig"
+                }
+            ]
+        }
+    },
+    {
+        "id":3,
+        "type":"plain",
+        "data":
+        {
+            "function":
+            [
                 {
                     "type":"gather",
-                    "id":"1"
+                    "resource":["5","6"]
+                },
+                {
+                    "type":"hunt"
                 }
             ]
         }

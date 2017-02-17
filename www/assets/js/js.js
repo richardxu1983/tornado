@@ -212,7 +212,7 @@ function SwitchCh2()
     Chn1.hide();
     Chn2.show();
     AddTinySel($("#Chn2_btn"))
-    RemoveTinySel($("#Chn1_btn"))    
+    RemoveTinySel($("#Chn1_btn"))
 }
 
 
@@ -223,8 +223,144 @@ function setHorizontalCenter(ui,parent)
     ui.css('left',left+'px');
 }
 
+function CreateBtn(options,parent)
+{
+    var el = $('<div>')
+    .attr('id',options.id)
+    if(options.type!=undefined)
+    {
+        el.addClass('btn_link')
+    }
+    else
+    {
+        el.addClass('btn_normal')
+    }
+    if(options.click!=undefined)
+    {
+         el.click(options.click)
+    }
+    if(parent!=undefined)
+    {
+        el.appendTo(parent)
+    }
+    var w = options.text.getTextW() + 20
+    el.css("width",w+"px");
+    el.text(options.text);
+    if(options.center==true)
+    {
+         setHorizontalCenter(el,parent)
+    }
+    return el;
+}
 
-var GameMenu = {
+String.prototype.getTextW = function(style){//获取字符串宽度及高度
+    var $span=$("<span>"+this+"</span>");
+    $span.css($.extend({},style,{visibility:"hidden"}));
+    $("body").append($span);
+    var w=$span.width()
+    $span.remove();
+    return w;
+};
+
+function checkIshanzi(s) {
+    //var patrn = /^[\u2E80-\u9FFF]$/; //Unicode编码中的汉字范围  /[^\x00-\x80]/
+    var patrn = /[^\x00-\x80]/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
+//校验登录名：只能输入4-20个以字母开头、可带数字、“_”、“.”的字串
+function checkIsRegisterUserName(s) {
+    var patrn = /^([a-zA-Z0-9]|[._]){4,20}$/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
+function checkIsNickName(s)
+{
+    var patrn = /^[\u4e00-\u9fa5a-zA-Z]{3,8}$/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
+//校验用户姓名：只能输入4-30个以字母开头的字串
+function checkIsTrueName(s) {
+    var patrn = /^[a-zA-Z]{4,30}$/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
+//校验密码：只能输入6-20个字母、数字、下划线
+function checkIsPasswd(s) {
+    var patrn = /^[a-z0-9_-]{6,19}$/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
+//校验普通电话、传真号码：可以“+”开头，除数字外，可含有“-”
+function checkIsTel(s) {
+    var patrn = /^[+]{0,1}(d){1,4}[ ]?([-]?((d)|[ ]){1,12})+$/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
+//校验手机号码
+function checkIsMobil(s) {
+    var patrn = /^0?(13[0-9]|15[012356789]|18[0236789]|14[57])[0-9]{8}$/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
+//校验邮政编码
+function checkIsPostalCode(s) {
+    var patrn = /^[a-zA-Z0-9 ]{3,12}$/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
+//校验是否IP地址
+function checkIsIP(s) {
+    var patrn = /^[0-9.]{1,20}$/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
+//校验EMail
+function checkIsEMail(s) {
+    //var regex = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+    //var reg =   /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+    var patrn = /^([0-9A-Za-z\-_\.]+)@([0-9A-Za-z]+\.[A-Za-z]{2,3}(\.[A-Za-z]{2})?)$/g;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
+//
+function enc(s)
+{
+    return $.md5(s+($('#date').val())+s.substr(1, 3))
+}
+
+function getCookie(name) {
+    var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+    return r ? r[1] : undefined;
+}
+
+jQuery.postJSON = function(url, args, callback,fail) {
+    args._xsrf = getCookie("_xsrf");
+    $.ajax({url: url,timeout:1000, data: $.param(args), dataType: "json", type: "POST",
+        success: function(response) {
+            callback(response);
+        },
+        error : function(){fail();}
+    });
+};
+
+function getQueryStr(val)
+{
+    var uri = window.location.search;
+　　var re = new RegExp("" +val+ "=([^&?]*)", "ig");
+　　return ((uri.match(re))?(uri.match(re)[0].substr(val.length+1)):null);
+}var GameMenu = {
 
     panel : null,
     mask : null,
@@ -251,7 +387,7 @@ var GameMenu = {
 
         var resetBtn = CreateBtn({
             text:getString(36),
-            click:Engine.sendRest,
+            click:dbug.sendResetAttr,
             id:"resetBtn",
             center:true,
         },this.panel)
@@ -293,145 +429,22 @@ var GameMenu = {
     {
         GameMenu.mask.hide();
     },
-}
-
-function CreateBtn(options,parent)
+}var dbug =
 {
-    var el = $('<div>')
-    .attr('id',options.id)
-    if(options.type!=undefined)
+    sendResetAttr:function()
     {
-        el.addClass('btn_link')
-    }
-    else
+        var data =
+        {
+            session:document.session,
+            action:'resetAttr',
+        };
+        jQuery.postJSON("./debug",data,dbug.resetAttrBack,Engine.onUpdateError)
+    },
+
+    resetAttrBack:function(data)
     {
-        el.addClass('btn_normal')
-    }
-    if(options.click!=undefined)
-    {
-         el.click(options.click)
-    }
-    if(parent!=undefined)
-    {
-        el.appendTo(parent)
-    }
-    var w = options.text.getTextW() + 20
-    el.css("width",w+"px");
-    el.text(options.text);
-    if(options.center==true)
-    {
-         setHorizontalCenter(el,parent)
-    }
-    return el;
-}
-
-String.prototype.getTextW = function(style){//获取字符串宽度及高度  
-    var $span=$("<span>"+this+"</span>");  
-    $span.css($.extend({},style,{visibility:"hidden"}));  
-    $("body").append($span);  
-    var w=$span.width()
-    $span.remove();  
-    return w;
-};  
-
-function checkIshanzi(s) {
-    //var patrn = /^[\u2E80-\u9FFF]$/; //Unicode编码中的汉字范围  /[^\x00-\x80]/
-    var patrn = /[^\x00-\x80]/;
-    if (!patrn.exec(s)) return false
-    return true
-}
- 
-//校验登录名：只能输入4-20个以字母开头、可带数字、“_”、“.”的字串
-function checkIsRegisterUserName(s) {
-    var patrn = /^([a-zA-Z0-9]|[._]){4,20}$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
- 
-function checkIsNickName(s)
-{
-    var patrn = /^[\u4e00-\u9fa5a-zA-Z]{3,8}$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
-
-//校验用户姓名：只能输入4-30个以字母开头的字串
-function checkIsTrueName(s) {
-    var patrn = /^[a-zA-Z]{4,30}$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
- 
-//校验密码：只能输入6-20个字母、数字、下划线
-function checkIsPasswd(s) {
-    var patrn = /^[a-z0-9_-]{6,19}$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
- 
-//校验普通电话、传真号码：可以“+”开头，除数字外，可含有“-”
-function checkIsTel(s) {
-    var patrn = /^[+]{0,1}(d){1,4}[ ]?([-]?((d)|[ ]){1,12})+$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
- 
-//校验手机号码
-function checkIsMobil(s) {
-    var patrn = /^0?(13[0-9]|15[012356789]|18[0236789]|14[57])[0-9]{8}$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
- 
-//校验邮政编码
-function checkIsPostalCode(s) {
-    var patrn = /^[a-zA-Z0-9 ]{3,12}$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
- 
-//校验是否IP地址
-function checkIsIP(s) {
-    var patrn = /^[0-9.]{1,20}$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
- 
-//校验EMail
-function checkIsEMail(s) {
-    //var regex = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
-    //var reg =   /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
-    var patrn = /^([0-9A-Za-z\-_\.]+)@([0-9A-Za-z]+\.[A-Za-z]{2,3}(\.[A-Za-z]{2})?)$/g;
-    if (!patrn.exec(s)) return false
-    return true
-}
-
-//
-function enc(s)
-{
-    return $.md5(s+($('#date').val())+s.substr(1, 3))
-}
-
-function getCookie(name) {
-    var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
-    return r ? r[1] : undefined;
-}
-
-jQuery.postJSON = function(url, args, callback,fail) {
-    args._xsrf = getCookie("_xsrf");
-    $.ajax({url: url,timeout:1000, data: $.param(args), dataType: "json", type: "POST",
-        success: function(response) {
-            callback(response);
-        },
-        error : function(){fail();}
-    });
-};
-
-function getQueryStr(val)
-{
-    var uri = window.location.search;
-　　var re = new RegExp("" +val+ "=([^&?]*)", "ig");
-　　return ((uri.match(re))?(uri.match(re)[0].substr(val.length+1)):null);
+        Role.AttrInit(data.attr)
+    },
 }/**
  * Created by 95 on 2016/3/7.
  */
@@ -857,24 +870,19 @@ var GB = {
 
 var Debug = true;
 
-var Engine = 
+var Engine =
 {
     nickname : null,
     user : null,
 
     init : function()
     {
-        //
-        //Notif.init();
-
-        //
         Engine.signinCheck();
-
     },
 
     signinCheck : function()
     {
-        var data = 
+        var data =
         {
             session:document.session,
             action:'signin',
@@ -912,7 +920,6 @@ var Engine =
             Engine.initBarUI('blink')
 
             Engine.ModuleInit(data)
-            Engine.update()
             CreateRightBtn()
             Engine.onClickBagBtn()
             SwitchCh1()
@@ -920,6 +927,7 @@ var Engine =
             Role.GoldSet(data.gold)
             Place.setPos(data.pos)
             GB.refreshUI()
+            Engine.update()
         }
     },
 
@@ -974,44 +982,24 @@ var Engine =
         RemoveTinySel($("#Weapon_btn"))
 
     },
-
     onSignError : function(data)
     {
         alert(getString(29))
         window.location.href = "/login";
     },
-
     update :function()
     {
-        var data = 
+        var data =
         {
             session:document.session,
-            action:'update',
         };
-        jQuery.postJSON("./",data,Engine.onUpdateBack,Engine.onUpdateError)
+        jQuery.postJSON("./update",data,Engine.onUpdateBack,Engine.onUpdateError)
     },
-
-    sendRest:function()
-    {
-        var data = 
-        {
-            session:document.session,
-            action:'resetAttr',
-        };
-        jQuery.postJSON("./",data,Engine.onsendRestBack,Engine.onUpdateError)        
-    },
-
     onUpdateError:function()
     {
         alert(getString(29))
         window.location.href = "/login";
     },
-
-    onsendRestBack:function(data)
-    {
-        Role.AttrInit(data.attr)
-    },
-
     onUpdateBack:function(data)
     {
         var sta = parseInt(data.sta);
@@ -1122,7 +1110,7 @@ function CreateRightBtn()
 function rbStyle(ui)
 {
     ui.css("float","left")
-    ui.css("margin-right","5px")    
+    ui.css("margin-right","5px")
 }
 
 $(

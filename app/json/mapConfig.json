@@ -1,0 +1,22 @@
+{
+    "width":800,
+    "height":800,
+    "tileChance":
+    [
+        {
+            "type":3,
+            "dump":0,
+            "chance":[1,40]
+        },
+        {
+            "type":1,
+            "dump":1,
+            "chance":[41,85]
+        },
+        {
+            "type":2,
+            "dump":1,
+            "chance":[86,100]
+        }
+    ]
+}
