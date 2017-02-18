@@ -262,6 +262,7 @@ String.prototype.getTextW = function(style){//获取字符串宽度及高度
     return w;
 };
 
+//
 function checkIshanzi(s) {
     //var patrn = /^[\u2E80-\u9FFF]$/; //Unicode编码中的汉字范围  /[^\x00-\x80]/
     var patrn = /[^\x00-\x80]/;
@@ -269,23 +270,9 @@ function checkIshanzi(s) {
     return true
 }
 
-//校验登录名：只能输入4-20个以字母开头、可带数字、“_”、“.”的字串
+//校验登录名：只能输入4-20个可带数字的字串
 function checkIsRegisterUserName(s) {
-    var patrn = /^([a-zA-Z0-9]|[._]){4,20}$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
-
-function checkIsNickName(s)
-{
-    var patrn = /^[\u4e00-\u9fa5a-zA-Z]{3,8}$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
-
-//校验用户姓名：只能输入4-30个以字母开头的字串
-function checkIsTrueName(s) {
-    var patrn = /^[a-zA-Z]{4,30}$/;
+    var patrn = /^([\u4e00-\u9fa5a-zA-Z0-9]){4,20}$/;
     if (!patrn.exec(s)) return false
     return true
 }
@@ -297,13 +284,6 @@ function checkIsPasswd(s) {
     return true
 }
 
-//校验普通电话、传真号码：可以“+”开头，除数字外，可含有“-”
-function checkIsTel(s) {
-    var patrn = /^[+]{0,1}(d){1,4}[ ]?([-]?((d)|[ ]){1,12})+$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
-
 //校验手机号码
 function checkIsMobil(s) {
     var patrn = /^0?(13[0-9]|15[012356789]|18[0236789]|14[57])[0-9]{8}$/;
@@ -311,25 +291,17 @@ function checkIsMobil(s) {
     return true
 }
 
-//校验邮政编码
-function checkIsPostalCode(s) {
-    var patrn = /^[a-zA-Z0-9 ]{3,12}$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
-
-//校验是否IP地址
-function checkIsIP(s) {
-    var patrn = /^[0-9.]{1,20}$/;
-    if (!patrn.exec(s)) return false
-    return true
-}
-
 //校验EMail
 function checkIsEMail(s) {
-    //var regex = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
-    //var reg =   /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
     var patrn = /^([0-9A-Za-z\-_\.]+)@([0-9A-Za-z]+\.[A-Za-z]{2,3}(\.[A-Za-z]{2})?)$/g;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
+//
+function checkIsNickName(s)
+{
+    var patrn = /^([\u4e00-\u9fa5a-zA-Z0-9]){3,8}$/;
     if (!patrn.exec(s)) return false
     return true
 }
@@ -340,6 +312,7 @@ function enc(s)
     return $.md5(s+($('#date').val())+s.substr(1, 3))
 }
 
+//
 function getCookie(name) {
     var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
     return r ? r[1] : undefined;
@@ -347,7 +320,7 @@ function getCookie(name) {
 
 jQuery.postJSON = function(url, args, callback,fail) {
     args._xsrf = getCookie("_xsrf");
-    $.ajax({url: url,timeout:1000, data: $.param(args), dataType: "json", type: "POST",
+    $.ajax({url: url,timeout:10000, data: $.param(args), dataType: "json", type: "POST",
         success: function(response) {
             callback(response);
         },
@@ -429,7 +402,9 @@ function getQueryStr(val)
     {
         GameMenu.mask.hide();
     },
-}var dbug =
+}
+
+var dbug =
 {
     sendResetAttr:function()
     {
@@ -843,32 +818,29 @@ var GB = {
 
     refreshUI:function()
     {
-        GB.refreshTitle()
+        GB.refreshTitle();
     },
 
     refreshTitle:function()
     {
-        txt=""
-        if(Place.belong!=0)
+        txt="";
+        if(Place.belong!==0)
         {
             if(Place.self==1)
             {
-                txt+=getString(37)
+                txt+=getString(37);
             }
             else
             {
-                txt+=Place.belongTo
+                txt+=Place.belongTo;
             }
         }
-
-        txt+=placeGetTitle(Place.type)
-        GB.title_ui.text(txt)
+        txt+=placeGetTitle(Place.type);
+        GB.title_ui.text(txt);
     },
 }/**
  * Created by 95 on 2016/3/7.
  */
-
-var Debug = true;
 
 var Engine =
 {
@@ -887,13 +859,13 @@ var Engine =
             session:document.session,
             action:'signin',
         };
-        jQuery.postJSON("./",data,Engine.onSigninBack,Engine.onSignError)
+        jQuery.postJSON("./",data,Engine.onSigninBack,Engine.onSignError);
     },
 
     onSigninBack : function(data)
     {
         var sta = parseInt(data.sta);
-        if(sta!=0)
+        if(sta!==0)
         {
             if(sta == -1){
                 alert(getString(27))
@@ -913,21 +885,20 @@ var Engine =
             Engine.nickname = data.nickname;
             Engine.user = data.user;
 
-            Engine.initBarUI('topBar')
-            Engine.initBarUI('bottombar')
-            Engine.initBarUI('rlink')
-            Engine.initBarUI('gboard')
-            Engine.initBarUI('blink')
-
-            Engine.ModuleInit(data)
-            CreateRightBtn()
-            Engine.onClickBagBtn()
-            SwitchCh1()
-            Role.AttrInit(data.attr)
-            Role.GoldSet(data.gold)
-            Place.setPos(data.pos)
-            GB.refreshUI()
-            Engine.update()
+            Engine.initBarUI('topBar');
+            Engine.initBarUI('bottombar');
+            Engine.initBarUI('rlink');
+            Engine.initBarUI('gboard');
+            Engine.initBarUI('blink');
+            Engine.ModuleInit(data);
+            CreateRightBtn();
+            Engine.onClickBagBtn();
+            SwitchCh1();
+            Role.AttrInit(data.attr);
+            Role.GoldSet(data.gold);
+            Place.setPos(data.pos);
+            GB.refreshUI();
+            Engine.update();
         }
     },
 
@@ -1003,14 +974,14 @@ var Engine =
     onUpdateBack:function(data)
     {
         var sta = parseInt(data.sta);
-        if(sta!=0)
+        if(sta!==0)
         {
 
         }
         else
         {
-            Env.setTime(data.year,data.season,data.week,data.day,data.hour)
-            Role.AttrInit(data.attr)
+            Env.setTime(data.year,data.season,data.week,data.day,data.hour);
+            Role.AttrInit(data.attr);
             setTimeout(Engine.update,1000);
         }
     },
@@ -1056,12 +1027,12 @@ var Engine =
 
 function AddTinySel(ui)
 {
-    ui.addClass("btn_link_sel")
+    ui.addClass("btn_link_sel");
 }
 
 function RemoveTinySel(ui)
 {
-    ui.removeClass("btn_link_sel")
+    ui.removeClass("btn_link_sel");
 }
 
 function CreateRightBtn()

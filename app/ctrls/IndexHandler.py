@@ -70,21 +70,20 @@ class indexHandler(BasicCtrl):
             pos_str = conn.hmget('role:pos:%s' % id, 'x', 'y')
             pos_x = int(pos_str[0])
             pos_y = int(pos_str[1])
-            pos_belong = game.place.NONE
+            pos_belong = game.place.BELONG_NONE
             pos_belongTo = 0
             pos_user = ""
             pos_self = 0
-            pos_type = game.place._mapJsonData["%s:%s" % (pos_x, pos_y)]
+            pos_type = 1
 
-            pos_str = conn.hmget('place:%s:%s' % (pos_x, pos_y), 'belong', 'belongTo', 'type')
+            if "%s:%s" % (pos_x, pos_y) in game.place._mapJsonData:
+                pos_type = game.place._mapJsonData["%s:%s" % (pos_x, pos_y)]
 
-            if pos_str is not None:
+            if conn.exists('place:%s:%s' % (pos_x, pos_y)):
+                pos_str = conn.hmget('place:%s:%s' % (pos_x, pos_y), 'belong', 'belongTo', 'type')
                 pos_belong = int(pos_str[0])
                 pos_belongTo = pos_str[1]
                 pos_type = int(pos_str[2])
-
-            if pos_type is None:
-                pos_type = 1
 
             if pos_belong == game.place.BELONG_PLAYER:
                 pos_user = conn.hmget('user:%s' % pos_belongTo, 'username')[0]
@@ -115,7 +114,7 @@ class indexHandler(BasicCtrl):
                     "belong": pos_belong,
                     "belongTo": pos_user,
                     "self": pos_self,
-                    "pos_type": pos_type,
+                    "type": pos_type,
                 }
             })   # 在别处登录了
             self.finish()

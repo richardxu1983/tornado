@@ -263,7 +263,7 @@ function getCookie(name) {
 
 jQuery.postJSON = function(url, args, callback,fail) {
     args._xsrf = getCookie("_xsrf");
-    $.ajax({url: url,timeout:1000, data: $.param(args), dataType: "json", type: "POST",
+    $.ajax({url: url,timeout:10000, data: $.param(args), dataType: "json", type: "POST",
         success: function(response) {
             callback(response);
         },

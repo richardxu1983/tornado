@@ -68,3 +68,4 @@ var GameMenu = {
         GameMenu.mask.hide();
     },
 }
+

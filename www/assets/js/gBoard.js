@@ -17,25 +17,24 @@ var GB = {
 
     refreshUI:function()
     {
-        GB.refreshTitle()
+        GB.refreshTitle();
     },
 
     refreshTitle:function()
     {
-        txt=""
-        if(Place.belong!=0)
+        txt="";
+        if(Place.belong!==0)
         {
             if(Place.self==1)
             {
-                txt+=getString(37)
+                txt+=getString(37);
             }
             else
             {
-                txt+=Place.belongTo
+                txt+=Place.belongTo;
             }
         }
-
-        txt+=placeGetTitle(Place.type)
-        GB.title_ui.text(txt)
+        txt+=placeGetTitle(Place.type);
+        GB.title_ui.text(txt);
     },
 }

@@ -40,18 +40,12 @@ class map(object):
         pass
 
     def load(self):
-        print("start loading map...")
         # 获取搜索阶段
         phase = conn.get('map:searchPhase')
         if not phase:
             conn.set('map:searchPhase', 1)
-        # 获取搜索半径
-        seg = conn.get('map:searchSeg')
-        if not seg:
             conn.set('map:searchSeg', 1)
-        if not seg:
             conn.set('map:searchIndex', 0)
-        print("map loaded")
 
     # 检测是否可以放置玩家
     def canPutPlayer(self, x, y):
@@ -62,12 +56,13 @@ class map(object):
                 if i <= 0 or j <= 0:
                     if i > self.width or j > self.height:
                         return False
-                str = conn.hmget('place:%s:%s' % (i, j), 'belong')
-                if str is None:
-                    continue
-                belong = int(str[0])
-                if belong != BELONG_NONE:
-                    return False
+                if conn.exists('place:%s:%s' % (i, j)):
+                    str = conn.hmget('place:%s:%s' % (i, j), 'belong')
+                    if str[0] is None:
+                        continue
+                    belong = int(str[0])
+                    if belong != BELONG_NONE:
+                        return False
         return True
 
     def setHomeForPlayer(self, uid, x, y):

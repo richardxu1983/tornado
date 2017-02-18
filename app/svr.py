@@ -4,8 +4,6 @@ import os.path
 import tornado.web
 import tornado.ioloop
 from tornado.options import define, options
-from app.url import url
-from app.etc import etc
 import time
 
 # 如果要在运行时设置编码,那么必须先reload
@@ -17,9 +15,12 @@ sys.setdefaultencoding('utf-8')
 
 # 目录设置到上一层
 sys.path[0] = os.path.dirname(sys.path[0])
+
+from app.url import url
+from app.etc import etc
+
 sys.path.insert(1, os.path.join(sys.path[0], 'lib'))
 svr = tornado.web.Application(handlers=url, **etc)
-
 define("port", default=8000, help="run on the given port", type=int)
 
 
