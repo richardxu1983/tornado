@@ -42,20 +42,32 @@ text[36]="重置"
 text[37]="自己的"
 text[38]="家"
 text[39]="森林"
+text[40]="查看"
+text[41]="建造"
+text[42]="升级"
+text[43]="采集"
+text[44]="打猎"
+text[45]="购买"
+text[46]="挖掘"
 
 var placeType=new Array();
-placeType[0]=38
-placeType[1]=39
+placeType[0]=38;
+placeType[1]=39;
 
-function getString(id) {
-    // body...
-    return text[id];
-}
+var funText = new Array();
+funText["view"] = 40;
+funText["build"] = 41;
+funText["expand"] = 42;
+funText["gather"] = 43;
+funText["hunt"] = 44;
+funText["buy"] = 45;
+funText["dig"] = 46;
 
-function placeGetTitle(type)
-{
-	return getString(placeType[type])
-}/**
+
+
+function getString(id) {return text[id];}
+function placeGetTitle(type){return getString(placeType[type])}
+function funGetText(str){return getString(funText[str])}/**
  * Created by 95 on 2016/3/7.
  */
 
@@ -841,6 +853,9 @@ var GB = {
 }/**
  * Created by 95 on 2016/3/7.
  */
+var _jData = new Array();
+var getList = ["build","expand","Facilities","Place"]
+var lastIndex;
 
 var Engine =
 {
@@ -884,22 +899,41 @@ var Engine =
             //登录成功
             Engine.nickname = data.nickname;
             Engine.user = data.user;
-
-            Engine.initBarUI('topBar');
-            Engine.initBarUI('bottombar');
-            Engine.initBarUI('rlink');
-            Engine.initBarUI('gboard');
-            Engine.initBarUI('blink');
-            Engine.ModuleInit(data);
-            CreateRightBtn();
-            Engine.onClickBagBtn();
-            SwitchCh1();
-            Role.AttrInit(data.attr);
-            Role.GoldSet(data.gold);
-            Place.setPos(data.pos);
-            GB.refreshUI();
-            Engine.update();
+            Engine.data = data;
+            Engine.jsonLoad()
         }
+    },
+
+    jsonLoad:function(data1)
+    {
+        lastIndex = getList.shift();
+        $.ajax({
+        url: "static/json/"+lastIndex+".json?random="+Math.random(),
+        type: "GET",
+        success: function(data){
+            _jData[lastIndex] = JSON.parse(data)
+            if(getList.length > 0){
+                    setTimeout(Engine.jsonLoad, 100);
+                }
+                else{
+                    alert(_jData["Place"][1]["type"])
+                    Engine.initBarUI('topBar');
+                    Engine.initBarUI('bottombar');
+                    Engine.initBarUI('rlink');
+                    Engine.initBarUI('gboard');
+                    Engine.initBarUI('blink');
+                    Engine.ModuleInit(Engine.data);
+                    CreateRightBtn();
+                    Engine.onClickBagBtn();
+                    SwitchCh1();
+                    Role.AttrInit(Engine.data.attr);
+                    Role.GoldSet(Engine.data.gold);
+                    Place.setPos(Engine.data.pos);
+                    GB.refreshUI();
+                    Engine.update();
+                }
+        },
+        });
     },
 
     initBarUI:function(bar)

@@ -8,19 +8,19 @@
         "function":
         [
             {
-                "type":"view",
+                "type":"view"
             },
             {
-                "type":"build",
+                "type":"build"
             },
             {
-                "type":"expand",
-            },
+                "type":"expand"
+            }
         ],
         "initFacilities":
         [
             {
-                "type":"bed",
+                "type":"bed"
             }
         ]
     },
@@ -30,7 +30,7 @@
         "function":
         [
             {
-                "type":"gather",
+                "type":"gather"
             },
             {
                 "type":"hunt"
@@ -46,7 +46,7 @@
         "function":
         [
             {
-                "type":"gather",
+                "type":"gather"
             },
             {
                 "type":"dig"
@@ -59,7 +59,7 @@
         "function":
         [
             {
-                "type":"gather",
+                "type":"gather"
             },
             {
                 "type":"hunt"

@@ -8,13 +8,13 @@
                 "list":
                 [
                     {
-                        "type": "bed",
+                        "type": "bed"
                     },
                     {
-                        "type": "operationTable",
+                        "type": "operationTable"
                     },
                     {
-                        "type": "cookTable",
+                        "type": "cookTable"
                     }
                 ]
             },
@@ -23,7 +23,7 @@
                 "list":
                 [
                     {
-                        "type": "herbTable",
+                        "type": "herbTable"
                     }
                 ]
             }

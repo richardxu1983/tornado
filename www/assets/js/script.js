@@ -1,6 +1,9 @@
 /**
  * Created by 95 on 2016/3/7.
  */
+var _jData = new Array();
+var getList = ["build","expand","Facilities","Place"]
+var lastIndex;
 
 var Engine =
 {
@@ -44,22 +47,41 @@ var Engine =
             //登录成功
             Engine.nickname = data.nickname;
             Engine.user = data.user;
-
-            Engine.initBarUI('topBar');
-            Engine.initBarUI('bottombar');
-            Engine.initBarUI('rlink');
-            Engine.initBarUI('gboard');
-            Engine.initBarUI('blink');
-            Engine.ModuleInit(data);
-            CreateRightBtn();
-            Engine.onClickBagBtn();
-            SwitchCh1();
-            Role.AttrInit(data.attr);
-            Role.GoldSet(data.gold);
-            Place.setPos(data.pos);
-            GB.refreshUI();
-            Engine.update();
+            Engine.data = data;
+            Engine.jsonLoad()
         }
+    },
+
+    jsonLoad:function(data1)
+    {
+        lastIndex = getList.shift();
+        $.ajax({
+        url: "static/json/"+lastIndex+".json?random="+Math.random(),
+        type: "GET",
+        success: function(data){
+            _jData[lastIndex] = JSON.parse(data)
+            if(getList.length > 0){
+                    setTimeout(Engine.jsonLoad, 100);
+                }
+                else{
+                    //alert(_jData["Place"][1]["type"])
+                    Engine.initBarUI('topBar');
+                    Engine.initBarUI('bottombar');
+                    Engine.initBarUI('rlink');
+                    Engine.initBarUI('gboard');
+                    Engine.initBarUI('blink');
+                    Engine.ModuleInit(Engine.data);
+                    CreateRightBtn();
+                    Engine.onClickBagBtn();
+                    SwitchCh1();
+                    Role.AttrInit(Engine.data.attr);
+                    Role.GoldSet(Engine.data.gold);
+                    Place.setPos(Engine.data.pos);
+                    GB.refreshUI();
+                    Engine.update();
+                }
+        },
+        });
     },
 
     initBarUI:function(bar)
