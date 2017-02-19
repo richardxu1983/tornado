@@ -66,7 +66,7 @@ class map(object):
         return True
 
     def setHomeForPlayer(self, uid, x, y):
-        slotNum = int(_placeJsonData[0]["data"]["FacilitySlot"])
+        slotNum = int(_placeJsonData[0]["FacilitySlot"])
         placeid = 'place:%s:%s' % (x, y)
         slotIndex = 0
         pipeline = conn.pipeline(True)
@@ -85,29 +85,22 @@ class map(object):
                 pipeline.hmset(placeid, {'slot:%s' % i: 0, })
 
         # Facilities
-        for v in _placeJsonData[0]["data"]["initFacilities"]:
+        for v in _placeJsonData[0]["initFacilities"]:
             slotIndex += 1
             pipeline.hmset(
                 placeid, {
                     'slot:%s:type' % slotIndex: v["type"],
-                    'slot:%s:id' % slotIndex: v["id"],
                     'slotIndex': slotIndex,
                 })
 
-        # function
-        for v in _placeJsonData[0]["data"]["function"]:
-            if v["type"] == "store":
-                id = v["id"]
-                room = int(jsonData._store[id]["room"])
-                pipeline.hmset(
-                    'store:%s:%s' % (x, y), {
-                        'room': room,
-                    })
-                for i in range(1, room + 1):
-                    pipeline.hmset(
-                        'store:%s:%s' % (x, y), {
-                            'room:%s' % i: 0,
-                        })
+        # store
+        room = int(_placeJsonData[0]["store"])
+        pipeline.hmset('store:%s:%s' % (x, y), {'room': room})
+        for i in range(1, room + 1):
+            pipeline.hmset(
+                'store:%s:%s' % (x, y), {
+                    'room:%s' % i: 0,
+                })
         pipeline.execute()
         pass
 

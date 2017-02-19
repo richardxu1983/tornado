@@ -1,81 +1,27 @@
 {
-    "bed": {
-        "1": {
-            "initFunction": "sleep",
-            "uses": [
-                "sleep"
-            ],
-             "sleep":{
-                "timeCost": "8",
-                "hp": "50"
-             }
+    "bed":
+    {
+        "uses": "sleep",
+        "buildCost":
+        {
+            "wood":20
+        },
+        "useData":{
+            "timeCost": "8",
+            "hp": "50"
         }
     },
-    "operationTable": {
-        "1": {
-            "initFunction": "make",
-            "uses": [
-                "make",
-                "upgrade",
-                "break"
-            ],
-            "make": [
-                "1",
-                "2",
-                "3"
-            ],
-            "upgrade": {
-                "type": "toFacilities",
-                "nextFacilities": "2",
-                "cost": {
-                    "wood": "100",
-                    "stone": "100"
-                }
-            }
+    "operationTable":
+    {
+        "uses": "make",
+        "buildCost":
+        {
+            "wood":20
         },
-        "2": {
-            "initFunction": "make",
-            "uses": [
-                "make",
-                "break"
-            ],
-            "make": [
-                "1",
-                "2",
-                "3"
-            ]
-        }
-    },
-    "pillar": {
-        "1": {
-            "initFunction": "viewPillar",
-            "uses": [
-                "viewPillar",
-                "upgrade",
-                "break"
-            ],
-            "viewPillar": {
-                "tempAdd": "1",
-                "desc": "1"
-            },
-            "upgrade": {
-                "type": "toFacilities",
-                "nextFacilities": "2",
-                "cost": {
-                    "wood": "50"
-                }
-            }
-        },
-        "2": {
-            "initFunction": "viewPillar",
-            "uses": [
-                "viewPillar",
-                "break"
-            ],
-            "viewPillar": {
-                "tempAdd": "2",
-                "desc": "2"
-            }
-        }
+        "useData": [
+            "1",
+            "2",
+            "3"
+        ],
     }
 }

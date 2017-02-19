@@ -1,17 +1,25 @@
 {
     "1": {
-        "type": "slotAdd",
-        "Multi": true,
-        "MaxTime": 3,
+        "MaxLevel": 3,
         "data": [
-            "4",
-            "4",
-            "4"
+            {
+                "slot":2,
+                "store":8
+            },
+            {
+                "slot":2,
+                "store":8
+            }
         ],
-        "cost": {
-            "wood": "120",
-            "stone": "64",
-            "Multi": "1.5"
-        }
+        "cost":[
+            {
+                "wood": "120",
+                "stone": "64"
+            },
+            {
+                "wood": "120",
+                "stone": "64"
+            },
+        ]
     }
 }

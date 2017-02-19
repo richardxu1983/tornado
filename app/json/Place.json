@@ -2,89 +2,106 @@
     {
         "id":0,
         "type":"home",
-        "data":
-        {
-            "FacilitySlot":"12",
-            "function":
-            [
-                {
-                    "type":"view",
-                    "id":"1"
-                },
-                {
-                    "type":"build",
-                    "id":"1"
-                },
-                {
-                    "type":"expand",
-                    "id":"1"
-                },
-                {
-                    "type":"store",
-                    "id":"1"
-                }
-            ],
-            "initFacilities":
-            [
-                {
-                    "type":"bed",
-                    "id":"1"
-                }
-            ]
-        }
+        "FacilitySlot":12,
+        "store":32,
+        "function":
+        [
+            {
+                "type":"view",
+            },
+            {
+                "type":"build",
+            },
+            {
+                "type":"expand",
+            },
+        ],
+        "initFacilities":
+        [
+            {
+                "type":"bed",
+            }
+        ]
     },
     {
         "id":1,
         "type":"forest",
-        "data":
-        {
-            "function":
-            [
-                {
-                    "type":"gather",
-                    "resource":["1","2"]
-                },
-                {
-                    "type":"hunt"
-                },
-                {
-                    "type":"buy"
-                }
-            ]
-        }
+        "function":
+        [
+            {
+                "type":"gather",
+                "resource":
+                [
+                    {
+                        "type":"1",
+                        "chance":100,
+                        "amount":5
+                    },
+                    {
+                        "type":"2",
+                        "chance":33,
+                        "amount":1
+                    }
+                ]
+            },
+            {
+                "type":"hunt"
+            },
+            {
+                "type":"buy"
+            }
+        ]
     },
     {
         "id":2,
         "type":"stonePit",
-        "data":
-        {
-            "function":
-            [
-                {
-                    "type":"gather",
-                    "resource":["3","4"]
-                },
-                {
-                    "type":"dig"
-                }
-            ]
-        }
+        "function":
+        [
+            {
+                "type":"gather",
+                "resource":
+                [
+                    {
+                        "type":"1",
+                        "chance":100,
+                        "amount":5
+                    },
+                    {
+                        "type":"2",
+                        "chance":33,
+                        "amount":1
+                    }
+                ]
+            },
+            {
+                "type":"dig"
+            }
+        ]
     },
     {
         "id":3,
         "type":"plain",
-        "data":
-        {
-            "function":
-            [
-                {
-                    "type":"gather",
-                    "resource":["5","6"]
-                },
-                {
-                    "type":"hunt"
-                }
-            ]
-        }
+        "function":
+        [
+            {
+                "type":"gather",
+                "resource":
+                [
+                    {
+                        "type":"1",
+                        "chance":100,
+                        "amount":5
+                    },
+                    {
+                        "type":"2",
+                        "chance":33,
+                        "amount":1
+                    }
+                ]
+            },
+            {
+                "type":"hunt"
+            }
+        ]
     }
 ]
