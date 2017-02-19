@@ -1,7 +1,13 @@
-{
-    "1": {
+[
+    {
+        "placeId":0,
         "MaxLevel": 3,
-        "data": [
+        "data":
+        [
+            {
+                "slot":0,
+                "store":0
+            },
             {
                 "slot":2,
                 "store":8
@@ -11,15 +17,20 @@
                 "store":8
             }
         ],
-        "cost":[
+        "cost":
+        [
             {
-                "wood": "120",
-                "stone": "64"
+                "wood": 0,
+                "stone": 0
             },
             {
-                "wood": "120",
-                "stone": "64"
+                "wood": 120,
+                "stone": 64
+            },
+            {
+                "wood": 120,
+                "stone": 64
             },
         ]
     }
-}
+]

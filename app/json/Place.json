@@ -4,6 +4,7 @@
         "type":"home",
         "FacilitySlot":12,
         "store":32,
+        "maxLevel":3,
         "function":
         [
             {
@@ -30,19 +31,6 @@
         [
             {
                 "type":"gather",
-                "resource":
-                [
-                    {
-                        "type":"1",
-                        "chance":100,
-                        "amount":5
-                    },
-                    {
-                        "type":"2",
-                        "chance":33,
-                        "amount":1
-                    }
-                ]
             },
             {
                 "type":"hunt"
@@ -59,19 +47,6 @@
         [
             {
                 "type":"gather",
-                "resource":
-                [
-                    {
-                        "type":"1",
-                        "chance":100,
-                        "amount":5
-                    },
-                    {
-                        "type":"2",
-                        "chance":33,
-                        "amount":1
-                    }
-                ]
             },
             {
                 "type":"dig"
@@ -85,19 +60,6 @@
         [
             {
                 "type":"gather",
-                "resource":
-                [
-                    {
-                        "type":"1",
-                        "chance":100,
-                        "amount":5
-                    },
-                    {
-                        "type":"2",
-                        "chance":33,
-                        "amount":1
-                    }
-                ]
             },
             {
                 "type":"hunt"

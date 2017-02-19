@@ -42,17 +42,29 @@ text[36]="重置"
 text[37]="自己的"
 text[38]="家"
 text[39]="森林"
+text[40]="查看"
+text[41]="建造"
+text[42]="升级"
+text[43]="采集"
+text[44]="打猎"
+text[45]="购买"
+text[46]="挖掘"
 
 var placeType=new Array();
-placeType[0]=38
-placeType[1]=39
+placeType[0]=38;
+placeType[1]=39;
 
-function getString(id) {
-    // body...
-    return text[id];
-}
+var funText = new Array();
+funText["view"] = 40;
+funText["build"] = 41;
+funText["expand"] = 42;
+funText["gather"] = 43;
+funText["hunt"] = 44;
+funText["buy"] = 45;
+funText["dig"] = 46;
 
-function placeGetTitle(type)
-{
-	return getString(placeType[type])
-}
+
+
+function getString(id) {return text[id];}
+function placeGetTitle(type){return getString(placeType[type])}
+function funGetText(str){return getString(funText[str])}

@@ -1,16 +1,32 @@
-{
-    "home":{
-        "1":
+[
+    {
+        "id":0,
+        "list":
         [
             {
-                "type": "bed",
+                "level":1,
+                "list":
+                [
+                    {
+                        "type": "bed",
+                    },
+                    {
+                        "type": "operationTable",
+                    },
+                    {
+                        "type": "cookTable",
+                    }
+                ]
             },
             {
-                "type": "operationTable",
-            },
-            {
-                "type": "cookTable",
+                "level":2,
+                "list":
+                [
+                    {
+                        "type": "herbTable",
+                    }
+                ]
             }
         ]
     }
-}
+]

@@ -75,6 +75,7 @@ class map(object):
                 'belong': BELONG_PLAYER,
                 'belongTo': uid,
                 'type': 0,
+                'level': 1,
                 'slotNum': slotNum,
                 'slotIndex': slotIndex,
             })
