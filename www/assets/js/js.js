@@ -42,17 +42,22 @@ text[36]="重置"
 text[37]="自己的"
 text[38]="家"
 text[39]="森林"
-text[40]="查看"
-text[41]="建造"
-text[42]="升级"
-text[43]="采集"
-text[44]="打猎"
-text[45]="购买"
-text[46]="挖掘"
+text[40]="查 看"
+text[41]="建 造"
+text[42]="升 级"
+text[43]="采 集"
+text[44]="打 猎"
+text[45]="购 买"
+text[46]="挖 掘"
+text[47]="离 开"
+text[48]="石 坑"
+text[49]="平 原"
 
 var placeType=new Array();
 placeType[0]=38;
 placeType[1]=39;
+placeType[2]=48;
+placeType[3]=49;
 
 var funText = new Array();
 funText["view"] = 40;
@@ -238,7 +243,10 @@ function setHorizontalCenter(ui,parent)
 function CreateBtn(options,parent)
 {
     var el = $('<div>')
-    .attr('id',options.id)
+    if(options.id!=undefined)
+    {
+        el.attr('id',options.id)
+    }
     if(options.type!=undefined)
     {
         el.addClass('btn_link')
@@ -249,7 +257,14 @@ function CreateBtn(options,parent)
     }
     if(options.click!=undefined)
     {
-         el.click(options.click)
+        if(options.param!=undefined)
+        {
+            el.click({msg:options.param},options.click)
+        }
+        else
+        {
+            el.click(options.click)
+        }
     }
     if(parent!=undefined)
     {
@@ -703,6 +718,7 @@ var Place = {
     self : 0,
     type:-1,
     pos_ui:null,
+    tiles:{},
 
     init : function()
     {
@@ -719,7 +735,7 @@ var Place = {
         Place.type = parseInt(data.type)
         Place.refreshTopTxt()
     },
-    
+
     refreshTopTxt:function()
     {
         var txt="[ "+Place.x+","+Place.y+" ]"
@@ -801,7 +817,7 @@ var Env = {
         {
             printMsg(getString(14),1)
         }
-        
+
         Env.last_hour = Env.hour
         Env.setTimeTxt()
     },
@@ -815,22 +831,131 @@ var Env = {
  * Created by 95 on 2016/3/7.
  */
 
+var GFun = {
+    funClick:function(event)
+    {
+        alert(event.data.msg)
+    },
+
+}
+
 var GB = {
 
     title_ui : null,
     fun_ui : null,
     op_ui : null,
+    lastOM: null,
 
     init:function()
     {
         GB.title_ui = $('<div>').addClass('gtitle').appendTo(".gboard");
         GB.fun_ui = $('<div>').addClass('gfun').appendTo(".gboard");
         GB.op_ui = $('<div>').addClass('gop').appendTo(".gboard");
+        GB.map_ui = $('<div>').addClass('gmap').appendTo(".gboard").hide();
+        GB.map = $('<div>').addClass('map').appendTo( GB.map_ui)
+        CreateBtn({
+        text:getString(1),
+        click:GB.onCloseLeave,
+        },GB.map_ui).css("position","absolute").css("right","5px").css("top","5px")
     },
-
+    onCloseLeave:function()
+    {
+        GB.map_ui.hide();
+    },
+    OnClickLeave:function()
+    {
+        GB.map_ui.show();
+        if(GB.lastOM==undefined)
+        {
+            var d = new Date();
+            GB.lastOM = d.getTime();
+            jQuery.postJSON("./omap",{},GB.onRecvMap,Engine.onSignError);
+        }
+        else
+        {
+            var d = new Date();
+            if((d.getTime() - GB.lastOM)>3000)
+            {
+                jQuery.postJSON("./omap",{},GB.onRecvMap,Engine.onSignError);
+                GB.lastOM = d.getTime();
+            }
+            else
+            {
+                GB.openExist()
+            }
+        }
+    },
+    openExist:function()
+    {
+        alert("1")
+        GB.map.empty();
+        for(var i=Place.x-4;i<Place.x+5;i++)
+        {
+            for(var j=Place.y-4;j<Place.y+5;j++)
+            {
+                var el = $('<div>').addClass('mapTile')
+                .appendTo(GB.map)
+                .css("left",(i - Place.x + 4)*49+"px")
+                .css("bottom",(j - Place.y + 4)*49+"px")
+                .attr("x",i)
+                .attr("y",j)
+                if(Place.tiles[i+":"+j]!=undefined)
+                {
+                    el.text(placeGetTitle(Place.tiles[i+":"+j]["type"]))
+                    if(Place.tiles[i+":"+j]["self"]==1)
+                    {
+                        el.addClass('selfm')
+                    }
+                }
+            }
+        }
+    },
+    onRecvMap:function(data)
+    {
+        GB.map.empty();
+        for(var i=Place.x-4;i<Place.x+5;i++)
+        {
+            for(var j=Place.y-4;j<Place.y+5;j++)
+            {
+                var el = $('<div>').addClass('mapTile')
+                .appendTo(GB.map)
+                .css("left",(i - Place.x + 4)*49+"px")
+                .css("bottom",(j - Place.y + 4)*49+"px")
+                .attr("x",i)
+                .attr("y",j)
+                .text(placeGetTitle(data[i+":"+j]["type"]))
+                if(data[i+":"+j]["self"]==1)
+                {
+                    el.addClass('selfm')
+                }
+                Place.tiles[i+":"+j] = {}
+                Place.tiles[i+":"+j]["type"] = data[i+":"+j]["type"]
+                Place.tiles[i+":"+j]["self"] = data[i+":"+j]["self"]
+                Place.tiles[i+":"+j]["belongTo"] = data[i+":"+j]["belongTo"]
+            }
+        }
+    },
     refreshUI:function()
     {
         GB.refreshTitle();
+        GB.refreshFun();
+    },
+    refreshFun:function()
+    {
+        GB.fun_ui.empty()
+        var tab = _jData["Place"][Place.type]["function"]
+        for(v in tab)
+        {
+            CreateBtn({
+            text:funGetText(tab[v]["type"]),
+            click:GFun.funClick,
+            param:tab[v]["type"],
+            },GB.fun_ui).css("float","left").css("margin-right","30px")
+        }
+        CreateBtn({
+        text:getString(47),
+        click:GB.OnClickLeave,
+        },GB.fun_ui).css("right","0px").css("float","right")
     },
 
     refreshTitle:function()
@@ -908,7 +1033,7 @@ var Engine =
     {
         lastIndex = getList.shift();
         $.ajax({
-        url: "static/json/"+lastIndex+".json?random="+Math.random(),
+        url: "static/json/"+lastIndex+".json?r="+Math.random(),
         type: "GET",
         success: function(data){
             _jData[lastIndex] = JSON.parse(data)
@@ -916,7 +1041,7 @@ var Engine =
                     setTimeout(Engine.jsonLoad, 100);
                 }
                 else{
-                    alert(_jData["Place"][1]["type"])
+                    //alert(_jData["Place"][1]["type"])
                     Engine.initBarUI('topBar');
                     Engine.initBarUI('bottombar');
                     Engine.initBarUI('rlink');

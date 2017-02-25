@@ -30,7 +30,8 @@ class indexHandler(BasicCtrl):
 
         if action == 'signin':
             # 获取登录码
-            login_code = tornado.escape.json_decode(self.get_current_login_code())
+            login_code = tornado.escape.json_decode(
+                self.get_current_login_code())
 
             print("id : %s" % id)
 
@@ -58,7 +59,8 @@ class indexHandler(BasicCtrl):
             ROLE.roleSetFedTime(id)
 
             role_id = 'role:attr:%s' % id
-            attr_str = conn.hmget(role_id, 'hp', 'fed', 'coldResist', 'atk', 'def')
+            attr_str = conn.hmget(role_id, 'hp', 'fed',
+                                  'coldResist', 'atk', 'def')
             attr_hp = attr_str[0]
             attr_fed = attr_str[1]
             attr_coldResist = attr_str[2]
@@ -80,7 +82,8 @@ class indexHandler(BasicCtrl):
                 pos_type = game.place._mapJsonData["%s:%s" % (pos_x, pos_y)]
 
             if conn.exists('place:%s:%s' % (pos_x, pos_y)):
-                pos_str = conn.hmget('place:%s:%s' % (pos_x, pos_y), 'belong', 'belongTo', 'type')
+                pos_str = conn.hmget('place:%s:%s' % (
+                    pos_x, pos_y), 'belong', 'belongTo', 'type')
                 pos_belong = int(pos_str[0])
                 pos_belongTo = pos_str[1]
                 pos_type = int(pos_str[2])
@@ -90,7 +93,6 @@ class indexHandler(BasicCtrl):
                 if pos_belongTo == id:
                     pos_self = 1
 
-            # print(time.asctime( time.localtime(float(conn.hmget('user:%s'%id,'signin')[0]))))
             self.write({
                 "sta": 0,
                 "nickname": nickname,

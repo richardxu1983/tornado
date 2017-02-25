@@ -2,7 +2,6 @@
 from tools.dbase import conn
 import json
 import random
-import jsonData
 
 _placeJsonFile = open('json/Place.json')
 _placeJsonData = json.load(_placeJsonFile)

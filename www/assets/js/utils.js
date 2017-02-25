@@ -169,7 +169,10 @@ function setHorizontalCenter(ui,parent)
 function CreateBtn(options,parent)
 {
     var el = $('<div>')
-    .attr('id',options.id)
+    if(options.id!=undefined)
+    {
+        el.attr('id',options.id)
+    }
     if(options.type!=undefined)
     {
         el.addClass('btn_link')
@@ -180,7 +183,14 @@ function CreateBtn(options,parent)
     }
     if(options.click!=undefined)
     {
-         el.click(options.click)
+        if(options.param!=undefined)
+        {
+            el.click({msg:options.param},options.click)
+        }
+        else
+        {
+            el.click(options.click)
+        }
     }
     if(parent!=undefined)
     {

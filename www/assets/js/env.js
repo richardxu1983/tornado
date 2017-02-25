@@ -11,6 +11,7 @@ var Place = {
     self : 0,
     type:-1,
     pos_ui:null,
+    tiles:{},
 
     init : function()
     {
@@ -27,7 +28,7 @@ var Place = {
         Place.type = parseInt(data.type)
         Place.refreshTopTxt()
     },
-    
+
     refreshTopTxt:function()
     {
         var txt="[ "+Place.x+","+Place.y+" ]"
@@ -109,7 +110,7 @@ var Env = {
         {
             printMsg(getString(14),1)
         }
-        
+
         Env.last_hour = Env.hour
         Env.setTimeTxt()
     },

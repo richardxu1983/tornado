@@ -6,6 +6,7 @@ from ctrls.DebugHandler import debugHandler
 from ctrls.UpdateHandler import updateHandler
 from ctrls.SigninHandler import signinHandler
 from ctrls.SignupHandler import signupHandler
+from ctrls.OpenMapHandler import openMapHandler
 
 import sys
 reload(sys)
@@ -18,4 +19,5 @@ url = [
     (r"/logout", LogOutHandler),
     (r"/update", updateHandler),
     (r"/debug", debugHandler),
+    (r"/omap", openMapHandler),
 ]

@@ -56,7 +56,7 @@ var Engine =
     {
         lastIndex = getList.shift();
         $.ajax({
-        url: "static/json/"+lastIndex+".json?random="+Math.random(),
+        url: "static/json/"+lastIndex+".json?r="+Math.random(),
         type: "GET",
         success: function(data){
             _jData[lastIndex] = JSON.parse(data)

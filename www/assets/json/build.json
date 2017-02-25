@@ -1,0 +1,32 @@
+[
+    {
+        "id":0,
+        "list":
+        [
+            {
+                "level":1,
+                "list":
+                [
+                    {
+                        "type": "bed"
+                    },
+                    {
+                        "type": "operationTable"
+                    },
+                    {
+                        "type": "cookTable"
+                    }
+                ]
+            },
+            {
+                "level":2,
+                "list":
+                [
+                    {
+                        "type": "herbTable"
+                    }
+                ]
+            }
+        ]
+    }
+]

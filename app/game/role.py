@@ -98,7 +98,8 @@ class gamerole():
         t = time.time()
         lock = acquire_lock_with_timeout(conn, 'nickname:' + nickname, 1)
         pipeline = conn.pipeline(True)
-        conn.set('role:fed_tick:%s' % id, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        conn.set('role:fed_tick:%s' % id,
+                 datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         pipeline.hmset(
             'role:basic:%s' % id, {
                 'nickname': nickname,
