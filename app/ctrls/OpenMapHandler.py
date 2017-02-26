@@ -15,8 +15,8 @@ class openMapHandler(BasicCtrl):
         pos_x = int(pos_str[0])
         pos_y = int(pos_str[1])
         resp = {}
-        for i in range(pos_x - 4, pos_x + 5):
-            for j in range(pos_y - 4, pos_y + 5):
+        for i in range(pos_x - 3, pos_x + 4):
+            for j in range(pos_y - 3, pos_y + 4):
                 pos_self = 0
                 pos_user = ""
                 if conn.exists('place:%s:%s' % (i, j)):
@@ -41,8 +41,8 @@ class openMapHandler(BasicCtrl):
                     }
                 else:
                     t = 3
-                    if "%s:%s" % (i, j) in game.place._mapJsonFile:
-                        t = game.place._mapJsonFile["%s:%s" % (i, j)]
+                    if "%s:%s" % (i, j) in game.place._mapJsonData.keys():
+                        t = game.place._mapJsonData["%s:%s" % (i, j)]
                     resp["%s:%s" % (i, j)] = {
                         "x": i,
                         "y": j,

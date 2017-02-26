@@ -13,8 +13,8 @@ function createMapTile(x,y)
 {
     var el = $('<div>').addClass('mapTile')
     .appendTo(GB.map)
-    .css("left",(x - Place.x + 4)*49+"px")
-    .css("bottom",(y - Place.y + 4)*49+"px")
+    .css("left",(x - Place.x + 3)*50+"px")
+    .css("bottom",(y - Place.y + 3)*50+"px")
     .attr("id",x+"p"+y)
     .attr("x",x)
     .attr("y",y)
@@ -105,9 +105,9 @@ var GB = {
     openExist:function()
     {
         GB.map.empty();
-        for(var i=Place.x-4;i<Place.x+5;i++)
+        for(var i=Place.x-3;i<Place.x+4;i++)
         {
-            for(var j=Place.y-4;j<Place.y+5;j++)
+            for(var j=Place.y-3;j<Place.y+4;j++)
             {
                 var el = createMapTile(i,j)
                 if(Place.tiles[i+":"+j]!=undefined)
@@ -124,9 +124,9 @@ var GB = {
     onRecvMap:function(data)
     {
         GB.map.empty();
-        for(var i=Place.x-4;i<Place.x+5;i++)
+        for(var i=Place.x-3;i<Place.x+4;i++)
         {
-            for(var j=Place.y-4;j<Place.y+5;j++)
+            for(var j=Place.y-3;j<Place.y+4;j++)
             {
                 var el = createMapTile(i,j)
                 el.text(placeGetTitle(data[i+":"+j]["type"]))

@@ -565,8 +565,8 @@
         position: absolute;
         width: 450px;
         height: 450px;
-        left: 5px;
-        top: 42px;
+        left: 55px;
+        top: 20px;
         padding: 0;
     }
     .mapTile
@@ -592,6 +592,7 @@
     .selfm
     {
         background-color: var(--tinygreen);
+        border-color: green;
     }
     .mapDesc
     {
