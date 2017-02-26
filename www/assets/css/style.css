@@ -565,8 +565,8 @@
         position: absolute;
         width: 450px;
         height: 450px;
-        left: 30px;
-        top: 30px;
+        left: 5px;
+        top: 42px;
         padding: 0;
     }
     .mapTile
@@ -584,9 +584,24 @@
         border: solid 1px #333;
         z-index:999;
     }
+    .mapSel
+    {
+        border: solid 1px orange;
+        z-index:1000;
+    }
     .selfm
     {
         background-color: var(--tinygreen);
+    }
+    .mapDesc
+    {
+        background-color: var(--tinygreen);
+        position: absolute;
+        width: 269px;
+        height: 100px;
+        top:50px;
+        right: 5px;
+        padding: 10px;
     }
 }
 

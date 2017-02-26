@@ -23,7 +23,26 @@ var Role = {
 		atk:0,
 		def:0,
 	},
-
+    setStatus:function(s)
+    {
+        if(s==0)
+        {
+            if(Role.status==1)
+            {
+                GB.CloseMap()
+            }
+            GB.refreshPlaceUI()
+        }
+        else if(s==1)
+        {
+            GB.ShowMap()
+            if(Role.status==0)
+            {
+                GB.closePlaceUI()
+            }
+        }
+        Role.status = s
+    },
 	mapAreaSet:function(x,y)
 	{
 		Role.mapArea.x = x
@@ -59,7 +78,7 @@ var Role = {
 			Role.AttrSet(key,data[key])
 		}
 	}
-} 
+}
 
 var AttrView = {
 
@@ -81,25 +100,25 @@ var AttrView = {
 
     coldResist:{
     	wrap : null,
-    	value:null,   	
+    	value:null,
     	text:32,
     },
 
     atk:{
     	wrap : null,
-    	value:null,   
-    	text:33,	
+    	value:null,
+    	text:33,
     },
 
     def:{
     	wrap : null,
-    	value:null,  
-    	text:34,	
-    }, 
+    	value:null,
+    	text:34,
+    },
     gold:{
     	wrap : null,
-    	value:null,   
-    	text:35,	
+    	value:null,
+    	text:35,
     },
 
     initAttrUI:function(attr,left,top)
@@ -156,6 +175,6 @@ var AttrView = {
         AttrView.initAttrUI("def",112,35);
         AttrView.initAttrUI("coldResist",217,7);
         AttrView.initPropUI("gold",5,7);
-        
+
     },
 }

@@ -67,8 +67,7 @@ class indexHandler(BasicCtrl):
             attr_atk = attr_str[3]
             attr_def = attr_str[4]
             prop_gold = conn.hmget('role:basic:%s' % id, 'gold')
-            prop_gold = prop_gold[0]
-
+            status = conn.hmget('role:status:%s' % id, 'status')
             pos_str = conn.hmget('role:pos:%s' % id, 'x', 'y')
             pos_x = int(pos_str[0])
             pos_y = int(pos_str[1])
@@ -103,6 +102,7 @@ class indexHandler(BasicCtrl):
                 "day": GDay._day,
                 "hour": GDay._hour,
                 "gold": prop_gold,
+                "status": status,
                 "attr": {
                     "hp": attr_hp,
                     "fed": attr_fed,

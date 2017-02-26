@@ -7,6 +7,9 @@ import json
 import time
 import datetime
 
+STATUS_IDLE = 0
+STATUS_MOVE_SELF = 1
+
 
 class gamerole():
     def __init__(self):
@@ -115,7 +118,7 @@ class gamerole():
             })
         pipeline.hmset(
             'role:status:%s' % id, {
-                'status': 0,
+                'status': STATUS_IDLE,
                 'atFunction': "viewFacilities",
             })
         # print("set!!!self.initHP=%s,type=%s,self.initHP[0]=%s"%(self.initHP,type(self.initHP),self.initHP[0]))

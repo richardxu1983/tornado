@@ -7,7 +7,19 @@ var GFun = {
     {
         alert(event.data.msg)
     },
+}
 
+function createMapTile(x,y)
+{
+    var el = $('<div>').addClass('mapTile')
+    .appendTo(GB.map)
+    .css("left",(x - Place.x + 4)*49+"px")
+    .css("bottom",(y - Place.y + 4)*49+"px")
+    .attr("id",x+"p"+y)
+    .attr("x",x)
+    .attr("y",y)
+    .click({x:x,y:y},GB.OnClickMapTile)
+    return el;
 }
 
 var GB = {
@@ -16,24 +28,58 @@ var GB = {
     fun_ui : null,
     op_ui : null,
     lastOM: null,
+    mapTileSel:{},
 
     init:function()
     {
-        GB.title_ui = $('<div>').addClass('gtitle').appendTo(".gboard");
-        GB.fun_ui = $('<div>').addClass('gfun').appendTo(".gboard");
-        GB.op_ui = $('<div>').addClass('gop').appendTo(".gboard");
+        GB.createPlaceUI()
+        GB.createMapUI()
+    },
+    createMapUI:function()
+    {
         GB.map_ui = $('<div>').addClass('gmap').appendTo(".gboard").hide();
         GB.map = $('<div>').addClass('map').appendTo( GB.map_ui)
         CreateBtn({
         text:getString(1),
-        click:GB.onCloseLeave,
-        },GB.map_ui).css("position","absolute").css("right","5px").css("top","5px")
+        click:GB.CloseMap,
+        },GB.map_ui).css("position","absolute").css("right","5px").css("top","12px")
+        GB.desc = $('<div>').addClass('mapDesc').appendTo(GB.map_ui)
     },
-    onCloseLeave:function()
+    createPlaceUI:function()
+    {
+        GB.title_ui = $('<div>').addClass('gtitle').appendTo(".gboard");
+        GB.fun_ui = $('<div>').addClass('gfun').appendTo(".gboard");
+        GB.op_ui = $('<div>').addClass('gop').appendTo(".gboard");
+    },
+    closePlaceUI:function()
+    {
+        GB.title_ui.remove()
+        GB.fun_ui.remove()
+        GB.op_ui.remove()
+    },
+    refreshPlaceUI()
+    {
+        GB.refreshUI()
+    },
+    CloseMap:function()
     {
         GB.map_ui.hide();
     },
-    OnClickLeave:function()
+    OnClickMapTile:function(event)
+    {
+        var str;
+        if(GB.mapTileSel!=undefined)
+        {
+            $("#"+GB.mapTileSel.x+"p"+GB.mapTileSel.y).removeClass('mapSel')
+        }
+        GB.mapTileSel.x = event.data.x
+        GB.mapTileSel.y = event.data.y
+        str=placeGetTitle(Place.tiles[GB.mapTileSel.x+":"+GB.mapTileSel.y]["type"])
+        str+=" ( "+GB.mapTileSel.x+","+GB.mapTileSel.y+" )"
+        GB.desc.text(str)
+        $("#"+GB.mapTileSel.x+"p"+GB.mapTileSel.y).addClass('mapSel')
+    },
+    ShowMap:function()
     {
         GB.map_ui.show();
         if(GB.lastOM==undefined)
@@ -58,18 +104,12 @@ var GB = {
     },
     openExist:function()
     {
-        alert("1")
         GB.map.empty();
         for(var i=Place.x-4;i<Place.x+5;i++)
         {
             for(var j=Place.y-4;j<Place.y+5;j++)
             {
-                var el = $('<div>').addClass('mapTile')
-                .appendTo(GB.map)
-                .css("left",(i - Place.x + 4)*49+"px")
-                .css("bottom",(j - Place.y + 4)*49+"px")
-                .attr("x",i)
-                .attr("y",j)
+                var el = createMapTile(i,j)
                 if(Place.tiles[i+":"+j]!=undefined)
                 {
                     el.text(placeGetTitle(Place.tiles[i+":"+j]["type"]))
@@ -88,13 +128,8 @@ var GB = {
         {
             for(var j=Place.y-4;j<Place.y+5;j++)
             {
-                var el = $('<div>').addClass('mapTile')
-                .appendTo(GB.map)
-                .css("left",(i - Place.x + 4)*49+"px")
-                .css("bottom",(j - Place.y + 4)*49+"px")
-                .attr("x",i)
-                .attr("y",j)
-                .text(placeGetTitle(data[i+":"+j]["type"]))
+                var el = createMapTile(i,j)
+                el.text(placeGetTitle(data[i+":"+j]["type"]))
                 if(data[i+":"+j]["self"]==1)
                 {
                     el.addClass('selfm')
@@ -108,12 +143,13 @@ var GB = {
     },
     refreshUI:function()
     {
+        if(Role.status==1){return;}
         GB.refreshTitle();
         GB.refreshFun();
     },
     refreshFun:function()
     {
-        GB.fun_ui.empty()
+        GB.fun_ui.empty();
         var tab = _jData["Place"][Place.type]["function"]
         for(v in tab)
         {
@@ -125,7 +161,7 @@ var GB = {
         }
         CreateBtn({
         text:getString(47),
-        click:GB.OnClickLeave,
+        click:GB.ShowMap,
         },GB.fun_ui).css("right","0px").css("float","right")
     },
 

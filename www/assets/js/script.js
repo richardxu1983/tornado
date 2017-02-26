@@ -77,7 +77,7 @@ var Engine =
                     Role.AttrInit(Engine.data.attr);
                     Role.GoldSet(Engine.data.gold);
                     Place.setPos(Engine.data.pos);
-                    GB.refreshUI();
+                    Role.setStatus(Engine.data["status"])
                     Engine.update();
                 }
         },
