@@ -79,6 +79,14 @@ var Engine =
                     Place.setPos(Engine.data.pos);
                     Role.setStatus(Engine.data["status"])
                     Engine.update();
+                    var idx  = Math.floor(Place.x / MAP_BLOCK)
+                    var idy  = Math.floor(Place.y / MAP_BLOCK)
+                    $.ajax({
+                    url: "static/json/map/"+idx+"-"+idy+".json?r="+MAP_V,
+                    type: "GET",
+                    success: function(data){
+                        jMap[Math.floor(Place.x / MAP_BLOCK)+"-"+Math.floor(Place.y / MAP_BLOCK)] = JSON.parse(data)}
+                    })
                 }
         },
         });

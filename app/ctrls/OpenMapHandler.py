@@ -39,18 +39,6 @@ class openMapHandler(BasicCtrl):
                         "self": pos_self,
                         "type": pos_type,
                     }
-                else:
-                    t = 3
-                    if "%s:%s" % (i, j) in game.place._mapJsonData.keys():
-                        t = game.place._mapJsonData["%s:%s" % (i, j)]
-                    resp["%s:%s" % (i, j)] = {
-                        "x": i,
-                        "y": j,
-                        "belong": game.place.BELONG_NONE,
-                        "belongTo": pos_user,
-                        "self": pos_self,
-                        "type": t,
-                    }
 
         self.write(resp)
         self.finish()

@@ -21,6 +21,7 @@ map json file wold be like this:
 '''
 
 data = {}
+MAP_FILE_BLOCK_NUM = 40
 
 
 def main():
@@ -37,12 +38,20 @@ def main():
                     type = k["type"]
                     break
             if k["dump"] == 1:
-                data["%s:%s" % (x, y)] = type
+                idx = x / MAP_FILE_BLOCK_NUM
+                idy = y / MAP_FILE_BLOCK_NUM
+                if "%s-%s" % (idx, idy) not in data.keys():
+                    data["%s-%s" % (idx, idy)] = {}
+                data["%s-%s" % (idx, idy)]["%s:%s" % (x, y)] = type
 
     # dump data to file
-    with open('%s\\json\\map.json' % os.path.dirname(sys.path[0]), 'w') as f:
-        json.dump(data, f)
-    pass
+    for k in data:
+        filename = '%s\\json\\map\\%s.json' % (os.path.dirname(sys.path[0]), k)
+        with open(filename, 'w') as f:
+            # print(data[k])
+            # print(filename)
+            json.dump(data[k], f)
+            print("finish : %s" % filename)
 
 
 if __name__ == "__main__":

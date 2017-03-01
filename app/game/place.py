@@ -10,9 +10,6 @@ _placeJsonData = json.load(_placeJsonFile)
 _mpcJsonFile = open('json/mapConfig.json')
 _mpcJsonData = json.load(_mpcJsonFile)
 
-_mapJsonFile = open('json/map.json')
-_mapJsonData = json.load(_mapJsonFile)
-
 '''
 print(_placeJsonData)
 print("\n=====================================\n")

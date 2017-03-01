@@ -77,15 +77,14 @@ class indexHandler(BasicCtrl):
             pos_self = 0
             pos_type = 1
 
-            if "%s:%s" % (pos_x, pos_y) in game.place._mapJsonData:
-                pos_type = game.place._mapJsonData["%s:%s" % (pos_x, pos_y)]
-
             if conn.exists('place:%s:%s' % (pos_x, pos_y)):
                 pos_str = conn.hmget('place:%s:%s' % (
                     pos_x, pos_y), 'belong', 'belongTo', 'type')
                 pos_belong = int(pos_str[0])
                 pos_belongTo = pos_str[1]
                 pos_type = int(pos_str[2])
+            else:
+                pos_type = -1
 
             if pos_belong == game.place.BELONG_PLAYER:
                 pos_user = conn.hmget('user:%s' % pos_belongTo, 'username')[0]

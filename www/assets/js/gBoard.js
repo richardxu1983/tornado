@@ -2,6 +2,10 @@
  * Created by 95 on 2016/3/7.
  */
 
+var jMap = {}
+var MAP_V = 1
+var MAP_BLOCK = 40
+
 var GFun = {
     funClick:function(event)
     {
@@ -9,16 +13,16 @@ var GFun = {
     },
 }
 
-function createMapTile(x,y)
+function createMapTile(x,y,i,j)
 {
     var el = $('<div>').addClass('mapTile')
     .appendTo(GB.map)
-    .css("left",(x - Place.x + 3)*50+"px")
-    .css("bottom",(y - Place.y + 3)*50+"px")
-    .attr("id",x+"p"+y)
+    .css("left",(i)*50+"px")
+    .css("bottom",(j)*50+"px")
+    .attr("id",i+"p"+j)
     .attr("x",x)
     .attr("y",y)
-    .click({x:x,y:y},GB.OnClickMapTile)
+    el.click({i:i,j:j},GB.OnClickMapTile)
     return el;
 }
 
@@ -28,6 +32,9 @@ var GB = {
     fun_ui : null,
     op_ui : null,
     lastOM: null,
+    mapData : null,
+    center_x:null,
+    center_y:null,
     mapTileSel:{},
 
     init:function()
@@ -70,18 +77,25 @@ var GB = {
         var str;
         if(GB.mapTileSel!=undefined)
         {
-            $("#"+GB.mapTileSel.x+"p"+GB.mapTileSel.y).removeClass('mapSel')
+            $("#"+GB.mapTileSel.i+"p"+GB.mapTileSel.j).removeClass('mapSel')
         }
-        GB.mapTileSel.x = event.data.x
-        GB.mapTileSel.y = event.data.y
-        str=placeGetTitle(Place.tiles[GB.mapTileSel.x+":"+GB.mapTileSel.y]["type"])
-        str+=" ( "+GB.mapTileSel.x+","+GB.mapTileSel.y+" )"
+        GB.mapTileSel.i = event.data.i
+        GB.mapTileSel.j = event.data.j
+        var el = $("#"+GB.mapTileSel.i+"p"+GB.mapTileSel.j)
+        str=placeGetTitle(Place.tiles[el.attr("x")+":"+el.attr("y")]["type"])
+        str+=" ( "+el.attr("x")+","+el.attr("y")+" )"
         GB.desc.text(str)
-        $("#"+GB.mapTileSel.x+"p"+GB.mapTileSel.y).addClass('mapSel')
+        el.addClass('mapSel')
     },
+
     ShowMap:function()
     {
         GB.map_ui.show();
+        GB.openLocalMap();
+    },
+
+    getOnlineMap:function()
+    {
         if(GB.lastOM==undefined)
         {
             var d = new Date();
@@ -96,57 +110,104 @@ var GB = {
                 jQuery.postJSON("./omap",{},GB.onRecvMap,Engine.onSignError);
                 GB.lastOM = d.getTime();
             }
-            else
-            {
-                GB.openExist()
-            }
         }
     },
-    openExist:function()
+
+    openLocalMap:function()
     {
-        GB.map.empty();
-        for(var i=Place.x-3;i<Place.x+4;i++)
+        if(GB.center_x==undefined){GB.center_x=Place.x;}
+        if(GB.center_y==undefined){GB.center_y=Place.y;}
+        if(GB.last_center_x==GB.center_x&&GB.last_center_y==GB.center_y)
         {
-            for(var j=Place.y-3;j<Place.y+4;j++)
+            return;
+        }
+        var x;
+        var y;
+        for(var i=0;i<7;i++)
+        {
+            for(var j=0;j<7;j++)
             {
-                var el = createMapTile(i,j)
-                if(Place.tiles[i+":"+j]!=undefined)
+                x = GB.center_x-3 + i;
+                y = GB.center_y-3 + j
+                idx  = Math.floor(x / MAP_BLOCK)
+                idy  = Math.floor(y / MAP_BLOCK)
+                if(jMap[idx+"-"+idy]==undefined)
                 {
-                    el.text(placeGetTitle(Place.tiles[i+":"+j]["type"]))
-                    if(Place.tiles[i+":"+j]["self"]==1)
+                    GB.x = x;
+                    GB.y = y;
+                    $.ajax({
+                    url: "static/json/map/"+idx+"-"+idy+".json?r="+MAP_V,
+                    type: "GET",
+                    success: function(data){
+                        jMap[Math.floor(GB.x/MAP_BLOCK)+"-"+Math.floor(GB.y/MAP_BLOCK)] = JSON.parse(data)
+                        GB.openLocalMap()}
+                    })
+                    return;
+                }
+                else
+                {
+                    var el = $("#"+i+"p"+j)
+                    if(el.length<=0)
+                    {
+                        el = createMapTile(x,y,i,j)
+                    }
+                    else
+                    {
+                        el.attr("x",x)
+                        el.attr("y",y)
+                    }
+                    mtype = jMap[idx+"-"+idy][x+":"+y]
+                    mtype = (mtype==undefined)?3:mtype
+                    el.text(placeGetTitle(mtype))
+                    Place.tiles[x+":"+y] = {}
+                    Place.tiles[x+":"+y]["type"] = mtype
+                    Place.tiles[x+":"+y]["self"] = 0
+                    Place.tiles[x+":"+y]["belongTo"] = "0"
+                }
+            }
+        }
+        GB.last_center_x = GB.center_x;
+        GB.last_center_y = GB.center_y;
+        GB.getOnlineMap();
+    },
+
+    onRecvMap:function(data)
+    {
+        if(GB.center_x==undefined){GB.center_x=Place.x;}
+        if(GB.center_y==undefined){GB.center_y=Place.y;}
+        GB.mapData = data;
+        var idx;
+        var idy;
+        var mtype;
+        for(var i=0;i<7;i++)
+        {
+            for(var j=0;j<7;j++)
+            {
+                x = GB.center_x-3 + i;
+                y = GB.center_y-3 + j;
+                if(data[x+":"+y]!=undefined)
+                {
+                    var el = $("#"+i+"p"+j)
+                    if(data[x+":"+y]["self"]==1)
                     {
                         el.addClass('selfm')
                     }
+                    el.text(placeGetTitle(data[x+":"+y]["type"]))
+                    Place.tiles[x+":"+y]["type"] = data[x+":"+y]["type"]
+                    Place.tiles[x+":"+y]["self"] = data[x+":"+y]["self"]
+                    Place.tiles[x+":"+y]["belongTo"] = data[x+":"+y]["belongTo"]
                 }
             }
         }
     },
-    onRecvMap:function(data)
-    {
-        GB.map.empty();
-        for(var i=Place.x-3;i<Place.x+4;i++)
-        {
-            for(var j=Place.y-3;j<Place.y+4;j++)
-            {
-                var el = createMapTile(i,j)
-                el.text(placeGetTitle(data[i+":"+j]["type"]))
-                if(data[i+":"+j]["self"]==1)
-                {
-                    el.addClass('selfm')
-                }
-                Place.tiles[i+":"+j] = {}
-                Place.tiles[i+":"+j]["type"] = data[i+":"+j]["type"]
-                Place.tiles[i+":"+j]["self"] = data[i+":"+j]["self"]
-                Place.tiles[i+":"+j]["belongTo"] = data[i+":"+j]["belongTo"]
-            }
-        }
-    },
+
     refreshUI:function()
     {
         if(Role.status==1){return;}
         GB.refreshTitle();
         GB.refreshFun();
     },
+
     refreshFun:function()
     {
         GB.fun_ui.empty();
