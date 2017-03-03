@@ -41,7 +41,7 @@ text[35]="金币"
 text[36]="重置"
 text[37]="自己的"
 text[38]="家"
-text[39]="森林"
+text[39]="森 林"
 text[40]="查 看"
 text[41]="建 造"
 text[42]="升 级"
@@ -752,6 +752,13 @@ var Place = {
         Place.belongTo = data.belongTo
         Place.self = parseInt(data.self)
         Place.type = parseInt(data.type)
+        if(Place.type==-1)
+        {
+            var idx  = Math.floor(Place.x / MAP_BLOCK)
+            var idy  = Math.floor(Place.y / MAP_BLOCK)
+            Place.type = jMap[idx+"-"+idy][Place.x+":"+Place.y]
+            Place.type = (Place.type==undefined)?3:Place.type
+        }
         Place.refreshTopTxt()
     },
 
@@ -865,8 +872,8 @@ function createMapTile(x,y,i,j)
 {
     var el = $('<div>').addClass('mapTile')
     .appendTo(GB.map)
-    .css("left",(i)*50+"px")
-    .css("bottom",(j)*50+"px")
+    .css("left",(i)*48+"px")
+    .css("bottom",(j)*48+"px")
     .attr("id",i+"p"+j)
     .attr("x",x)
     .attr("y",y)
@@ -930,8 +937,14 @@ var GB = {
         GB.mapTileSel.i = event.data.i
         GB.mapTileSel.j = event.data.j
         var el = $("#"+GB.mapTileSel.i+"p"+GB.mapTileSel.j)
-        str=placeGetTitle(Place.tiles[el.attr("x")+":"+el.attr("y")]["type"])
-        str+=" ( "+el.attr("x")+","+el.attr("y")+" )"
+        var x = el.attr("x")
+        var y = el.attr("y")
+        var idx  = Math.floor(x / MAP_BLOCK)
+        var idy  = Math.floor(y / MAP_BLOCK)
+        var t = jMap[idx+"-"+idy][x+":"+y]
+        t = (t==undefined)?3:t
+        str=placeGetTitle(t)
+        str+=" ( "+x+","+y+" )"
         GB.desc.text(str)
         el.addClass('mapSel')
     },
@@ -971,12 +984,12 @@ var GB = {
         }
         var x;
         var y;
-        for(var i=0;i<7;i++)
+        for(var i=0;i<9;i++)
         {
-            for(var j=0;j<7;j++)
+            for(var j=0;j<9;j++)
             {
-                x = GB.center_x-3 + i;
-                y = GB.center_y-3 + j
+                x = GB.center_x-4 + i;
+                y = GB.center_y-4 + j
                 idx  = Math.floor(x / MAP_BLOCK)
                 idy  = Math.floor(y / MAP_BLOCK)
                 if(jMap[idx+"-"+idy]==undefined)
@@ -1007,10 +1020,6 @@ var GB = {
                     mtype = jMap[idx+"-"+idy][x+":"+y]
                     mtype = (mtype==undefined)?3:mtype
                     el.text(placeGetTitle(mtype))
-                    Place.tiles[x+":"+y] = {}
-                    Place.tiles[x+":"+y]["type"] = mtype
-                    Place.tiles[x+":"+y]["self"] = 0
-                    Place.tiles[x+":"+y]["belongTo"] = "0"
                 }
             }
         }
@@ -1027,12 +1036,12 @@ var GB = {
         var idx;
         var idy;
         var mtype;
-        for(var i=0;i<7;i++)
+        for(var i=0;i<9;i++)
         {
-            for(var j=0;j<7;j++)
+            for(var j=0;j<9;j++)
             {
-                x = GB.center_x-3 + i;
-                y = GB.center_y-3 + j;
+                x = GB.center_x-4 + i;
+                y = GB.center_y-4 + j;
                 if(data[x+":"+y]!=undefined)
                 {
                     var el = $("#"+i+"p"+j)
@@ -1041,6 +1050,7 @@ var GB = {
                         el.addClass('selfm')
                     }
                     el.text(placeGetTitle(data[x+":"+y]["type"]))
+                    if(Place.tiles[x+":"+y]==undefined){Place.tiles[x+":"+y]={}}
                     Place.tiles[x+":"+y]["type"] = data[x+":"+y]["type"]
                     Place.tiles[x+":"+y]["self"] = data[x+":"+y]["self"]
                     Place.tiles[x+":"+y]["belongTo"] = data[x+":"+y]["belongTo"]
@@ -1148,42 +1158,50 @@ var Engine =
     jsonLoad:function(data1)
     {
         lastIndex = getList.shift();
-        $.ajax({
-        url: "static/json/"+lastIndex+".json?r="+Math.random(),
-        type: "GET",
-        success: function(data){
-            _jData[lastIndex] = JSON.parse(data)
-            if(getList.length > 0){
+        $.ajax
+        ({
+            url: "static/json/"+lastIndex+".json?r="+Math.random(),
+            type: "GET",
+            success: function(data){
+                _jData[lastIndex] = JSON.parse(data)
+                if(getList.length > 0)
+                {
                     setTimeout(Engine.jsonLoad, 100);
                 }
-                else{
+                else
+                {
                     //alert(_jData["Place"][1]["type"])
-                    Engine.initBarUI('topBar');
-                    Engine.initBarUI('bottombar');
-                    Engine.initBarUI('rlink');
-                    Engine.initBarUI('gboard');
-                    Engine.initBarUI('blink');
-                    Engine.ModuleInit(Engine.data);
-                    CreateRightBtn();
-                    Engine.onClickBagBtn();
-                    SwitchCh1();
-                    Role.AttrInit(Engine.data.attr);
-                    Role.GoldSet(Engine.data.gold);
-                    Place.setPos(Engine.data.pos);
-                    Role.setStatus(Engine.data["status"])
-                    Engine.update();
-                    var idx  = Math.floor(Place.x / MAP_BLOCK)
-                    var idy  = Math.floor(Place.y / MAP_BLOCK)
+                    var idx  = Math.floor(Engine.data.pos.x / MAP_BLOCK)
+                    var idy  = Math.floor(Engine.data.pos.y / MAP_BLOCK)
                     $.ajax({
                     url: "static/json/map/"+idx+"-"+idy+".json?r="+MAP_V,
                     type: "GET",
                     success: function(data){
-                        console.log("get~~")
-                        jMap[Math.floor(Place.x / MAP_BLOCK)+"-"+Math.floor(Place.y / MAP_BLOCK)] = JSON.parse(data)}
+                        jMap[Math.floor(Engine.data.pos.x / MAP_BLOCK)+"-"+Math.floor(Engine.data.pos.y / MAP_BLOCK)] = JSON.parse(data);
+                        Engine.onMapBack();
+                        }
                     })
                 }
-        },
+            },
         });
+    },
+
+    onMapBack:function()
+    {
+        Engine.initBarUI('topBar');
+        Engine.initBarUI('bottombar');
+        Engine.initBarUI('rlink');
+        Engine.initBarUI('gboard');
+        Engine.initBarUI('blink');
+        Engine.ModuleInit(Engine.data);
+        CreateRightBtn();
+        Engine.onClickBagBtn();
+        SwitchCh1();
+        Role.AttrInit(Engine.data.attr);
+        Role.GoldSet(Engine.data.gold);
+        Place.setPos(Engine.data.pos);
+        Role.setStatus(Engine.data["status"])
+        Engine.update();
     },
 
     initBarUI:function(bar)

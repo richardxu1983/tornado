@@ -26,6 +26,13 @@ var Place = {
         Place.belongTo = data.belongTo
         Place.self = parseInt(data.self)
         Place.type = parseInt(data.type)
+        if(Place.type==-1)
+        {
+            var idx  = Math.floor(Place.x / MAP_BLOCK)
+            var idy  = Math.floor(Place.y / MAP_BLOCK)
+            Place.type = jMap[idx+"-"+idy][Place.x+":"+Place.y]
+            Place.type = (Place.type==undefined)?3:Place.type
+        }
         Place.refreshTopTxt()
     },
 

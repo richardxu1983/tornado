@@ -75,7 +75,6 @@ class indexHandler(BasicCtrl):
             pos_belongTo = 0
             pos_user = ""
             pos_self = 0
-            pos_type = 1
 
             if conn.exists('place:%s:%s' % (pos_x, pos_y)):
                 pos_str = conn.hmget('place:%s:%s' % (

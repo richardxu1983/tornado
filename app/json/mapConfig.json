@@ -1,6 +1,7 @@
 {
     "width":800,
     "height":800,
+    "block":40,
     "tileChance":
     [
         {

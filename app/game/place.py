@@ -26,6 +26,18 @@ RandomGap = PlayerGap * 2 + 1
 BELONG_NONE = 0
 BELONG_NPC = 1
 BELONG_PLAYER = 999
+MAP_X_MAX = 800
+MAP_Y_MAX = 800
+MAP_FILE_BLOCK_NUM = _mpcJsonData["block"]
+
+_jmap = {}
+for idx in range(0, _mpcJsonData["width"] / MAP_FILE_BLOCK_NUM + 1):
+    for idy in range(0, _mpcJsonData["height"] / MAP_FILE_BLOCK_NUM + 1):
+        _jf = open('json/map/%s-%s.json' % (idx, idy))
+        _jd = json.load(_jf)
+        if "%s-%s" % (idx, idy) not in _jmap.keys():
+            _jmap["%s-%s" % (idx, idy)] = {}
+        _jmap["%s-%s" % (idx, idy)].update(_jd)
 
 
 class map(object):

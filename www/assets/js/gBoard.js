@@ -17,8 +17,8 @@ function createMapTile(x,y,i,j)
 {
     var el = $('<div>').addClass('mapTile')
     .appendTo(GB.map)
-    .css("left",(i)*50+"px")
-    .css("bottom",(j)*50+"px")
+    .css("left",(i)*48+"px")
+    .css("bottom",(j)*48+"px")
     .attr("id",i+"p"+j)
     .attr("x",x)
     .attr("y",y)
@@ -82,8 +82,14 @@ var GB = {
         GB.mapTileSel.i = event.data.i
         GB.mapTileSel.j = event.data.j
         var el = $("#"+GB.mapTileSel.i+"p"+GB.mapTileSel.j)
-        str=placeGetTitle(Place.tiles[el.attr("x")+":"+el.attr("y")]["type"])
-        str+=" ( "+el.attr("x")+","+el.attr("y")+" )"
+        var x = el.attr("x")
+        var y = el.attr("y")
+        var idx  = Math.floor(x / MAP_BLOCK)
+        var idy  = Math.floor(y / MAP_BLOCK)
+        var t = jMap[idx+"-"+idy][x+":"+y]
+        t = (t==undefined)?3:t
+        str=placeGetTitle(t)
+        str+=" ( "+x+","+y+" )"
         GB.desc.text(str)
         el.addClass('mapSel')
     },
@@ -123,12 +129,12 @@ var GB = {
         }
         var x;
         var y;
-        for(var i=0;i<7;i++)
+        for(var i=0;i<9;i++)
         {
-            for(var j=0;j<7;j++)
+            for(var j=0;j<9;j++)
             {
-                x = GB.center_x-3 + i;
-                y = GB.center_y-3 + j
+                x = GB.center_x-4 + i;
+                y = GB.center_y-4 + j
                 idx  = Math.floor(x / MAP_BLOCK)
                 idy  = Math.floor(y / MAP_BLOCK)
                 if(jMap[idx+"-"+idy]==undefined)
@@ -159,10 +165,6 @@ var GB = {
                     mtype = jMap[idx+"-"+idy][x+":"+y]
                     mtype = (mtype==undefined)?3:mtype
                     el.text(placeGetTitle(mtype))
-                    Place.tiles[x+":"+y] = {}
-                    Place.tiles[x+":"+y]["type"] = mtype
-                    Place.tiles[x+":"+y]["self"] = 0
-                    Place.tiles[x+":"+y]["belongTo"] = "0"
                 }
             }
         }
@@ -179,12 +181,12 @@ var GB = {
         var idx;
         var idy;
         var mtype;
-        for(var i=0;i<7;i++)
+        for(var i=0;i<9;i++)
         {
-            for(var j=0;j<7;j++)
+            for(var j=0;j<9;j++)
             {
-                x = GB.center_x-3 + i;
-                y = GB.center_y-3 + j;
+                x = GB.center_x-4 + i;
+                y = GB.center_y-4 + j;
                 if(data[x+":"+y]!=undefined)
                 {
                     var el = $("#"+i+"p"+j)
@@ -193,6 +195,7 @@ var GB = {
                         el.addClass('selfm')
                     }
                     el.text(placeGetTitle(data[x+":"+y]["type"]))
+                    if(Place.tiles[x+":"+y]==undefined){Place.tiles[x+":"+y]={}}
                     Place.tiles[x+":"+y]["type"] = data[x+":"+y]["type"]
                     Place.tiles[x+":"+y]["self"] = data[x+":"+y]["self"]
                     Place.tiles[x+":"+y]["belongTo"] = data[x+":"+y]["belongTo"]

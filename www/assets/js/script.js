@@ -55,41 +55,50 @@ var Engine =
     jsonLoad:function(data1)
     {
         lastIndex = getList.shift();
-        $.ajax({
-        url: "static/json/"+lastIndex+".json?r="+Math.random(),
-        type: "GET",
-        success: function(data){
-            _jData[lastIndex] = JSON.parse(data)
-            if(getList.length > 0){
+        $.ajax
+        ({
+            url: "static/json/"+lastIndex+".json?r="+Math.random(),
+            type: "GET",
+            success: function(data){
+                _jData[lastIndex] = JSON.parse(data)
+                if(getList.length > 0)
+                {
                     setTimeout(Engine.jsonLoad, 100);
                 }
-                else{
+                else
+                {
                     //alert(_jData["Place"][1]["type"])
-                    Engine.initBarUI('topBar');
-                    Engine.initBarUI('bottombar');
-                    Engine.initBarUI('rlink');
-                    Engine.initBarUI('gboard');
-                    Engine.initBarUI('blink');
-                    Engine.ModuleInit(Engine.data);
-                    CreateRightBtn();
-                    Engine.onClickBagBtn();
-                    SwitchCh1();
-                    Role.AttrInit(Engine.data.attr);
-                    Role.GoldSet(Engine.data.gold);
-                    Place.setPos(Engine.data.pos);
-                    Role.setStatus(Engine.data["status"])
-                    Engine.update();
-                    var idx  = Math.floor(Place.x / MAP_BLOCK)
-                    var idy  = Math.floor(Place.y / MAP_BLOCK)
+                    var idx  = Math.floor(Engine.data.pos.x / MAP_BLOCK)
+                    var idy  = Math.floor(Engine.data.pos.y / MAP_BLOCK)
                     $.ajax({
                     url: "static/json/map/"+idx+"-"+idy+".json?r="+MAP_V,
                     type: "GET",
                     success: function(data){
-                        jMap[Math.floor(Place.x / MAP_BLOCK)+"-"+Math.floor(Place.y / MAP_BLOCK)] = JSON.parse(data)}
+                        jMap[Math.floor(Engine.data.pos.x / MAP_BLOCK)+"-"+Math.floor(Engine.data.pos.y / MAP_BLOCK)] = JSON.parse(data);
+                        Engine.onMapBack();
+                        }
                     })
                 }
-        },
+            },
         });
+    },
+
+    onMapBack:function()
+    {
+        Engine.initBarUI('topBar');
+        Engine.initBarUI('bottombar');
+        Engine.initBarUI('rlink');
+        Engine.initBarUI('gboard');
+        Engine.initBarUI('blink');
+        Engine.ModuleInit(Engine.data);
+        CreateRightBtn();
+        Engine.onClickBagBtn();
+        SwitchCh1();
+        Role.AttrInit(Engine.data.attr);
+        Role.GoldSet(Engine.data.gold);
+        Place.setPos(Engine.data.pos);
+        Role.setStatus(Engine.data["status"])
+        Engine.update();
     },
 
     initBarUI:function(bar)
