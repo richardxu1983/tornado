@@ -52,6 +52,10 @@ text[46]="挖 掘"
 text[47]="离 开"
 text[48]="石 坑"
 text[49]="平 原"
+text[50]="东"
+text[51]="南"
+text[52]="西"
+text[53]="北"
 
 var placeType=new Array();
 placeType[0]=38;

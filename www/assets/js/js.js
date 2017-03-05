@@ -52,6 +52,10 @@ text[46]="挖 掘"
 text[47]="离 开"
 text[48]="石 坑"
 text[49]="平 原"
+text[50]="东"
+text[51]="南"
+text[52]="西"
+text[53]="北"
 
 var placeType=new Array();
 placeType[0]=38;
@@ -890,12 +894,14 @@ var GB = {
     mapData : null,
     center_x:null,
     center_y:null,
+    mapOn: false,
     mapTileSel:{},
 
     init:function()
     {
         GB.createPlaceUI()
         GB.createMapUI()
+        GB.getOnlineMap()
     },
     createMapUI:function()
     {
@@ -906,7 +912,54 @@ var GB = {
         click:GB.CloseMap,
         },GB.map_ui).css("position","absolute").css("right","5px").css("top","12px")
         GB.desc = $('<div>').addClass('mapDesc').appendTo(GB.map_ui)
+
+        CreateBtn({
+        text:getString(50),
+        param:1,
+        click:GB.MapGo,
+        },GB.map_ui).css("position","absolute").css("left","490px").css("top","250px")
+        CreateBtn({
+        text:getString(52),
+        param:2,
+        click:GB.MapGo,
+        },GB.map_ui).css("position","absolute").css("left","10px").css("top","250px")
+        CreateBtn({
+        text:getString(53),
+        param:3,
+        click:GB.MapGo,
+        },GB.map_ui).css("position","absolute").css("left","250px").css("top","11px")
+        CreateBtn({
+        text:getString(51),
+        param:4,
+        click:GB.MapGo,
+        },GB.map_ui).css("position","absolute").css("left","250px").css("top","485px")
     },
+
+    MapGo:function(event)
+    {
+        if(event.data.msg==1)
+        {
+            GB.center_x+=1
+            if(GB.center_x>=795){GB.center_x==795}
+        }
+        if(event.data.msg==2)
+        {
+            GB.center_x-=1
+            if(GB.center_x<=5){GB.center_x==5}
+        }
+        if(event.data.msg==3)
+        {
+            GB.center_y+=1
+            if(GB.center_y>=795){GB.center_y==795}
+        }
+        if(event.data.msg==4)
+        {
+            GB.center_y-=1
+            if(GB.center_y<=5){GB.center_y==5}
+        }
+        if(GB.mapOn){ GB.openLocalMap();}
+    },
+
     createPlaceUI:function()
     {
         GB.title_ui = $('<div>').addClass('gtitle').appendTo(".gboard");
@@ -926,6 +979,7 @@ var GB = {
     CloseMap:function()
     {
         GB.map_ui.hide();
+        GB.mapOn = false;
     },
     OnClickMapTile:function(event)
     {
@@ -953,25 +1007,16 @@ var GB = {
     {
         GB.map_ui.show();
         GB.openLocalMap();
+        GB.mapOn = true;
     },
 
     getOnlineMap:function()
     {
-        if(GB.lastOM==undefined)
+        if(GB.mapOn)
         {
-            var d = new Date();
-            GB.lastOM = d.getTime();
             jQuery.postJSON("./omap",{},GB.onRecvMap,Engine.onSignError);
         }
-        else
-        {
-            var d = new Date();
-            if((d.getTime() - GB.lastOM)>3000)
-            {
-                jQuery.postJSON("./omap",{},GB.onRecvMap,Engine.onSignError);
-                GB.lastOM = d.getTime();
-            }
-        }
+        setTimeout(GB.getOnlineMap,1500);
     },
 
     openLocalMap:function()
@@ -984,6 +1029,8 @@ var GB = {
         }
         var x;
         var y;
+        var mid;
+        var t;
         for(var i=0;i<9;i++)
         {
             for(var j=0;j<9;j++)
@@ -1017,15 +1064,24 @@ var GB = {
                         el.attr("x",x)
                         el.attr("y",y)
                     }
-                    mtype = jMap[idx+"-"+idy][x+":"+y]
-                    mtype = (mtype==undefined)?3:mtype
-                    el.text(placeGetTitle(mtype))
+                    mid = x+":"+y;
+                    if(Place.tiles[mid]==undefined)
+                    {
+                        mtype = jMap[idx+"-"+idy][mid]
+                        mtype = (mtype==undefined)?3:mtype
+                        el.text(placeGetTitle(mtype))
+                        el.removeClass('selfm')
+                    }
+                    else
+                    {
+                        el.text(placeGetTitle(Place.tiles[mid]["type"]))
+                        if(Place.tiles[mid]["self"]==1){el.addClass('selfm')}
+                    }
                 }
             }
         }
         GB.last_center_x = GB.center_x;
         GB.last_center_y = GB.center_y;
-        GB.getOnlineMap();
     },
 
     onRecvMap:function(data)
@@ -1036,24 +1092,29 @@ var GB = {
         var idx;
         var idy;
         var mtype;
+        var mid;
+        for(k in data)
+        {
+            if(Place.tiles[k]==undefined){Place.tiles[k]={}}
+            Place.tiles[k]["type"] = data[k]["type"]
+            Place.tiles[k]["self"] = data[k]["self"]
+            Place.tiles[k]["belongTo"] = data[k]["belongTo"]
+        }
         for(var i=0;i<9;i++)
         {
             for(var j=0;j<9;j++)
             {
                 x = GB.center_x-4 + i;
                 y = GB.center_y-4 + j;
-                if(data[x+":"+y]!=undefined)
+                mid = x+":"+y;
+                if(Place.tiles[mid]!=undefined)
                 {
                     var el = $("#"+i+"p"+j)
-                    if(data[x+":"+y]["self"]==1)
+                    if(Place.tiles[mid]["self"]==1)
                     {
                         el.addClass('selfm')
                     }
-                    el.text(placeGetTitle(data[x+":"+y]["type"]))
-                    if(Place.tiles[x+":"+y]==undefined){Place.tiles[x+":"+y]={}}
-                    Place.tiles[x+":"+y]["type"] = data[x+":"+y]["type"]
-                    Place.tiles[x+":"+y]["self"] = data[x+":"+y]["self"]
-                    Place.tiles[x+":"+y]["belongTo"] = data[x+":"+y]["belongTo"]
+                    el.text(placeGetTitle(Place.tiles[mid]["type"]))
                 }
             }
         }
