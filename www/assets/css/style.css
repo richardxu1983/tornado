@@ -576,13 +576,11 @@
         height: 48px;
         border: 1px solid var(--linecolor);
         text-align: center;
-        padding-top: 10px;
     }
     .mapTile:hover
     {
         cursor: pointer;
         border: solid 1px #333;
-        z-index:999;
     }
     .mapSel
     {

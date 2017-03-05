@@ -882,7 +882,24 @@ function createMapTile(x,y,i,j)
     .attr("x",x)
     .attr("y",y)
     el.click({i:i,j:j},GB.OnClickMapTile)
+    crImgForTile(el,"ground","1")
+    crImgForTile(el,"obj","2")
+    crImgForTile(el,"army","3")
     return el;
+}
+
+function crImgForTile(el,id,zindex)
+{
+    $("<img id='"+id+"' src=''/>")
+    .css("vertical-align","middle")
+    .css("z-index",zindex)
+    .appendTo(el);
+}
+
+function setOnlineMap(el,id)
+{
+    //el.text(placeGetTitle(Place.tiles[id]["type"]))
+    if(Place.tiles[id]["self"]==1){el.addClass('selfm')}
 }
 
 var GB = {
@@ -912,7 +929,6 @@ var GB = {
         click:GB.CloseMap,
         },GB.map_ui).css("position","absolute").css("right","5px").css("top","12px")
         GB.desc = $('<div>').addClass('mapDesc').appendTo(GB.map_ui)
-
         CreateBtn({
         text:getString(50),
         param:1,
@@ -956,6 +972,10 @@ var GB = {
         {
             GB.center_y-=1
             if(GB.center_y<=5){GB.center_y==5}
+        }
+        if(GB.mapTileSel!=undefined)
+        {
+            $("#"+GB.mapTileSel.i+"p"+GB.mapTileSel.j).removeClass('mapSel')
         }
         if(GB.mapOn){ GB.openLocalMap();}
     },
@@ -1031,6 +1051,8 @@ var GB = {
         var y;
         var mid;
         var t;
+        var img;
+        var el;
         for(var i=0;i<9;i++)
         {
             for(var j=0;j<9;j++)
@@ -1054,28 +1076,18 @@ var GB = {
                 }
                 else
                 {
-                    var el = $("#"+i+"p"+j)
-                    if(el.length<=0)
-                    {
-                        el = createMapTile(x,y,i,j)
-                    }
-                    else
-                    {
-                        el.attr("x",x)
-                        el.attr("y",y)
-                    }
+                    el = $("#"+i+"p"+j)
+                    if(el.length<=0){el = createMapTile(x,y,i,j)}
+                    else{el.attr("x",x).attr("y",y)}
+                    img = el.children('#ground')
                     mid = x+":"+y;
-                    if(Place.tiles[mid]==undefined)
+                    mtype = jMap[idx+"-"+idy][mid]
+                    mtype = (mtype==undefined)?3:mtype
+                    img.attr('src',"static/img/m/m-"+mtype+".png")
+                    el.removeClass('selfm')
+                    if(Place.tiles[mid]!=undefined)
                     {
-                        mtype = jMap[idx+"-"+idy][mid]
-                        mtype = (mtype==undefined)?3:mtype
-                        el.text(placeGetTitle(mtype))
-                        el.removeClass('selfm')
-                    }
-                    else
-                    {
-                        el.text(placeGetTitle(Place.tiles[mid]["type"]))
-                        if(Place.tiles[mid]["self"]==1){el.addClass('selfm')}
+                        setOnlineMap(el,mid)
                     }
                 }
             }
@@ -1109,12 +1121,7 @@ var GB = {
                 mid = x+":"+y;
                 if(Place.tiles[mid]!=undefined)
                 {
-                    var el = $("#"+i+"p"+j)
-                    if(Place.tiles[mid]["self"]==1)
-                    {
-                        el.addClass('selfm')
-                    }
-                    el.text(placeGetTitle(Place.tiles[mid]["type"]))
+                    setOnlineMap($("#"+i+"p"+j),mid)
                 }
             }
         }
