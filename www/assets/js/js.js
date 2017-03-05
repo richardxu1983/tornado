@@ -896,6 +896,15 @@ function crImgForTile(el,id,zindex)
     .appendTo(el);
 }
 
+function crDiForMap(sid,param,left,top)
+{
+    CreateBtn({
+    text:getString(sid),
+    param:param,
+    click:GB.MapGo,
+    },GB.map_ui).css("position","absolute").css("left",left+"px").css("top",top+"px")
+}
+
 function setOnlineMap(el,id)
 {
     //el.text(placeGetTitle(Place.tiles[id]["type"]))
@@ -929,49 +938,40 @@ var GB = {
         click:GB.CloseMap,
         },GB.map_ui).css("position","absolute").css("right","5px").css("top","12px")
         GB.desc = $('<div>').addClass('mapDesc').appendTo(GB.map_ui)
-        CreateBtn({
-        text:getString(50),
-        param:1,
-        click:GB.MapGo,
-        },GB.map_ui).css("position","absolute").css("left","490px").css("top","250px")
-        CreateBtn({
-        text:getString(52),
-        param:2,
-        click:GB.MapGo,
-        },GB.map_ui).css("position","absolute").css("left","10px").css("top","250px")
-        CreateBtn({
-        text:getString(53),
-        param:3,
-        click:GB.MapGo,
-        },GB.map_ui).css("position","absolute").css("left","250px").css("top","11px")
-        CreateBtn({
-        text:getString(51),
-        param:4,
-        click:GB.MapGo,
-        },GB.map_ui).css("position","absolute").css("left","250px").css("top","485px")
+        crDiForMap(50,1,490,250)
+        crDiForMap(52,2,10,250)
+        crDiForMap(53,3,250,11)
+        crDiForMap(51,4,250,485)
     },
 
     MapGo:function(event)
     {
-        if(event.data.msg==1)
+        switch(event.data.msg)
         {
-            GB.center_x+=1
-            if(GB.center_x>=795){GB.center_x==795}
-        }
-        if(event.data.msg==2)
-        {
-            GB.center_x-=1
-            if(GB.center_x<=5){GB.center_x==5}
-        }
-        if(event.data.msg==3)
-        {
-            GB.center_y+=1
-            if(GB.center_y>=795){GB.center_y==795}
-        }
-        if(event.data.msg==4)
-        {
-            GB.center_y-=1
-            if(GB.center_y<=5){GB.center_y==5}
+            case 1:
+            {
+                GB.center_x+=1
+                if(GB.center_x>=795){GB.center_x==795}
+                break;
+            }
+            case 2:
+            {
+                GB.center_x-=1
+                if(GB.center_x<=5){GB.center_x==5}
+                break;
+            }
+            case 3:
+            {
+                GB.center_y+=1
+                if(GB.center_y>=795){GB.center_y==795}
+                break;
+            }
+            case 4:
+            {
+                GB.center_y-=1
+                if(GB.center_y<=5){GB.center_y==5}
+                break;
+            }
         }
         if(GB.mapTileSel!=undefined)
         {
